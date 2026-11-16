@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 import {
   LevelSelector,
   levelThemes,
-  matchesOpening,
+  matchesRepertoire,
+  sacrificeFirst,
+  solverColor,
   parsePuzzleRow,
   passesQuality,
   stableHash,
@@ -64,13 +66,19 @@ describe('filters', () => {
     expect(passesQuality(puzzle({ ratingDeviation: 200 }))).toBe(false);
   });
 
-  it('matches openings by the variation tag', () => {
-    const tags = new Set(['Italian_Game_Giuoco_Piano', 'Caro-Kann_Defense_Other_variations']);
-    expect(matchesOpening(puzzle(), tags)).toBe(true);
-    expect(matchesOpening(puzzle({ openingTags: ['Italian_Game', 'Italian_Game_Evans_Gambit'] }), tags)).toBe(false);
-    // Family-only tags match "<Family>_Other_variations".
-    expect(matchesOpening(puzzle({ openingTags: ['Caro-Kann_Defense'] }), tags)).toBe(true);
-    expect(matchesOpening(puzzle({ openingTags: [] }), tags)).toBe(false);
+  it('matches only variations our trees reach, with the solver on our side', () => {
+    // puzzle(): White to move in the FEN, so Black solves.
+    const sides = new Map([
+      ['Italian_Game_Giuoco_Piano', ['black']],
+      ['French_Defense_Exchange_Variation', ['white']],
+    ]);
+    expect(solverColor(puzzle())).toBe('black');
+    expect(matchesRepertoire(puzzle(), sides)).toBe(true);
+    expect(matchesRepertoire(puzzle({ openingTags: ['French_Defense', 'French_Defense_Exchange_Variation'] }), sides)).toBe(false);
+    expect(matchesRepertoire(puzzle({ openingTags: ['Italian_Game', 'Italian_Game_Evans_Gambit'] }), sides)).toBe(false);
+    // Family-only tags never match: build-openings no longer emits "<Family>_Other_variations".
+    expect(matchesRepertoire(puzzle({ openingTags: ['Italian_Game'] }), sides)).toBe(false);
+    expect(matchesRepertoire(puzzle({ openingTags: [] }), sides)).toBe(false);
   });
 
   it('keeps only the level themes, in rating range, without excluded themes', () => {
@@ -80,6 +88,27 @@ describe('filters', () => {
     expect(levelThemes(puzzle({ rating: 1500 }), L2)).toEqual([]);
     expect(levelThemes(puzzle({ rating: 600 }), L2)).toEqual([]);
     expect(levelThemes(puzzle({ themes: ['fork', 'sacrifice'] }), L2)).toEqual([]);
+  });
+
+  it('drops puzzles carrying a theme taught at a higher level', () => {
+    const f = { ...L2, beyondThemes: ['deflection'] };
+    expect(levelThemes(puzzle({ themes: ['fork'] }), f)).toEqual(['fork']);
+    expect(levelThemes(puzzle({ themes: ['fork', 'deflection'] }), f)).toEqual([]);
+  });
+
+  it('spots solutions that start by giving up material', () => {
+    // After ...Nc6 (setup), Qxf7+?? Kxf7: the queen is taken back for a pawn.
+    const sac = { fen: 'rnbqkbnr/pppppppp/8/8/8/5Q2/PPPPPPPP/RNB1KBNR b KQkq - 0 1', moves: 'b8c6 f3f7 e8f7' };
+    expect(sacrificeFirst(sac)).toBe(true);
+    // 2.Qxf6 exf6 trades queen for knight too...
+    expect(sacrificeFirst({ ...sac, moves: 'g8f6 f3f6 e7f6' })).toBe(true);
+    // ...but taking a free piece is no sacrifice.
+    expect(sacrificeFirst({ fen: '4k3/8/8/3n4/8/8/8/3QK3 b - - 0 1', moves: 'e8f7 d1d5 f7e7' })).toBe(false);
+    expect(sacrificeFirst({ ...sac, moves: 'b8c6 f3f7' })).toBe(false);
+    const f = { ...L2, noSacrificeFirst: true };
+    const p = puzzle({ ...sac, themes: ['fork'] });
+    expect(levelThemes(p, f)).toEqual([]);
+    expect(levelThemes(p, L2)).toEqual(['fork']);
   });
 });
 
@@ -103,6 +132,25 @@ describe('LevelSelector', () => {
     const s = new LevelSelector({ ...L2, target: 10 });
     s.offer(puzzle({ id: 'x', themes: ['fork', 'pin'] }));
     expect(s.finalize().map((p) => p.id)).toEqual(['x']);
+  });
+
+  it('fills weighted themes first, then shares the rest', () => {
+    const s = new LevelSelector({ ...L2, target: 10, weights: { hangingPiece: 0.6 } });
+    for (let i = 0; i < 30; i++) s.offer(puzzle({ id: `h${i}`, themes: ['hangingPiece'] }));
+    for (let i = 0; i < 30; i++) s.offer(puzzle({ id: `f${i}`, themes: ['fork'] }));
+    for (let i = 0; i < 30; i++) s.offer(puzzle({ id: `p${i}`, themes: ['pin'] }));
+    const ids = s.finalize().map((p) => p.id[0]);
+    expect(ids).toHaveLength(10);
+    expect(ids.filter((c) => c === 'h')).toHaveLength(6);
+    expect(ids.filter((c) => c === 'f')).toHaveLength(2);
+    expect(ids.filter((c) => c === 'p')).toHaveLength(2);
+  });
+
+  it('tops up from weighted themes when the others run dry', () => {
+    const s = new LevelSelector({ ...L2, target: 10, weights: { hangingPiece: 0.5 } });
+    for (let i = 0; i < 30; i++) s.offer(puzzle({ id: `h${i}`, themes: ['hangingPiece'] }));
+    s.offer(puzzle({ id: 'f0', themes: ['fork'] }));
+    expect(s.finalize()).toHaveLength(10);
   });
 
   it('keeps the shipped fields small', () => {

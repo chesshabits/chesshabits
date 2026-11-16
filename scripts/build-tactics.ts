@@ -5,9 +5,12 @@
  *   node scripts/build-tactics.ts [--input path/to/puzzles.csv[.zst]]
  *
  * Streams the Lichess puzzle database (CC0, lichess_db_puzzle.csv.zst; downloaded once to
- * .cache/lichess/, which is gitignored), keeps puzzles whose OpeningTags match the level's
- * repertoire openings (data/openings.json), applies the level's theme set, excluded themes and
- * rating range (data/levels/level-N.json), and writes data/tactics/level-N.json.
+ * .cache/lichess/, which is gitignored) and keeps, per level, puzzles that
+ *  - come from a variation our trees reach, with the solver playing our side of it (data/openings.json);
+ *  - train one of the level's themes, within its rating range (data/levels/level-N.json);
+ *  - carry no theme taught only at a higher level, and no excluded theme;
+ *  - at levels with the no-sacrifices restriction, don't start by giving up material.
+ * Weighted themes (e.g. hanging pieces) get their share first. Writes data/tactics/level-N.json.
  */
 import { spawn, spawnSync } from 'node:child_process';
 import { createReadStream, createWriteStream, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -20,7 +23,7 @@ import { createZstdDecompress } from 'node:zlib';
 import {
   DEFAULT_QUALITY,
   LevelSelector,
-  matchesOpening,
+  matchesRepertoire,
   parsePuzzleRow,
   passesQuality,
   type TacticsFilter,
@@ -63,17 +66,28 @@ async function main() {
   if (input === DEFAULT_INPUT) await ensureDownloaded(input);
 
   const openings = JSON.parse(readFileSync(join(ROOT, 'data', 'openings.json'), 'utf8')) as {
-    levels: Record<string, { tags: string[] }>;
+    levels: Record<string, { tags: Record<string, string[]> }>;
   };
 
-  const levels = LEVELS.map((level) => {
-    const config = JSON.parse(readFileSync(join(ROOT, 'data', 'levels', `level-${level}.json`), 'utf8')) as {
-      tactics: TacticsFilter;
+  const configs = LEVELS.map(
+    (level) =>
+      (JSON.parse(readFileSync(join(ROOT, 'data', 'levels', `level-${level}.json`), 'utf8')) as {
+        restrictions: string[];
+        tactics: TacticsFilter;
+      }),
+  );
+  const allThemes = new Set(configs.flatMap((c) => c.tactics.themes));
+  const levels = LEVELS.map((level, i) => {
+    const c = configs[i];
+    const filter: TacticsFilter = {
+      ...c.tactics,
+      beyondThemes: [...allThemes].filter((t) => !c.tactics.themes.includes(t)),
+      noSacrificeFirst: c.restrictions.includes('no-sacrifices'),
     };
     return {
       level,
-      tags: new Set(openings.levels[level].tags),
-      selector: new LevelSelector(config.tactics),
+      tags: new Map(Object.entries(openings.levels[level].tags)),
+      selector: new LevelSelector(filter),
     };
   });
 
@@ -91,7 +105,7 @@ async function main() {
     if (!passesQuality(p, DEFAULT_QUALITY)) continue;
     let matched = false;
     for (const l of levels) {
-      if (!matchesOpening(p, l.tags)) continue;
+      if (!matchesRepertoire(p, l.tags)) continue;
       matched = true;
       l.selector.offer(p);
     }
@@ -100,15 +114,15 @@ async function main() {
 
   mkdirSync(join(ROOT, 'data', 'tactics'), { recursive: true });
   console.log(`read ${total.toLocaleString()} puzzles; ${inOpenings.toLocaleString()} pass quality and match a repertoire opening`);
-  const unmatched = [...new Set(levels.flatMap((l) => [...l.tags]))].filter((t) => !seenTags.has(t));
+  const unmatched = [...new Set(levels.flatMap((l) => [...l.tags.keys()]))].filter((t) => !seenTags.has(t));
   if (unmatched.length) console.log(`opening tags with no puzzles (check spelling vs the puzzle DB): ${unmatched.join(', ')}`);
   for (const l of levels) {
     const counts = l.selector.counts();
     const puzzles = l.selector.finalize();
     const out = {
       source:
-        'Lichess puzzle database (CC0, database.lichess.org), filtered to this level\'s repertoire openings, ' +
-        'themes and rating range by scripts/build-tactics.ts. Do not edit by hand.',
+        'Lichess puzzle database (CC0, database.lichess.org), filtered to this level\'s repertoire lines ' +
+        '(solver on our side), themes and rating range by scripts/build-tactics.ts. Do not edit by hand.',
       level: l.level,
       puzzles,
     };
@@ -118,9 +132,12 @@ async function main() {
     const thin = Object.entries(counts)
       .filter(([, n]) => n < 20)
       .map(([t, n]) => `${t} ${n}`);
+    const mix: Record<string, number> = {};
+    for (const p of puzzles) for (const t of p.themes) if (l.selector.filter.themes.includes(t)) mix[t] = (mix[t] ?? 0) + 1;
     console.log(
       `level ${l.level}: ${puzzles.length} puzzles, ${(json.length / 1024).toFixed(0)} KB` +
-        (thin.length ? ` (thin themes: ${thin.join(', ')})` : ''),
+        (thin.length ? ` (thin themes: ${thin.join(', ')})` : '') +
+        `\n  themes: ${Object.entries(mix).sort((a, b) => b[1] - a[1]).map(([t, n]) => `${t} ${n}`).join(', ')}`,
     );
   }
 }

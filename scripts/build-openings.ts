@@ -52,20 +52,23 @@ async function main() {
   };
 
   const lines: Record<string, string> = {};
-  const perLevel: Record<string, { names: Set<string>; tags: Set<string> }> = {};
+  const perLevel: Record<string, { names: Set<string>; sides: Map<string, Set<string>> }> = {};
 
   for (const [key, { tree }] of Object.entries(data.trees)) {
-    const level = key.match(/^level(\d)_/)![1];
-    const bucket = (perLevel[level] ??= { names: new Set(), tags: new Set() });
+    const [, level, color] = key.match(/^level(\d)_(white|black)$/)!;
+    const bucket = (perLevel[level] ??= { names: new Set(), sides: new Map() });
     const walk = (children: Record<string, MoveNode> | undefined, line: string[]) => {
       for (const [san, node] of Object.entries(children ?? {})) {
         const next = [...line, san];
         const name = nameLine(index, next);
         if (name) {
           lines[next.join(' ')] = name;
-          if (next.length >= MIN_TAG_PLY) {
+          const tag = openingTags(name).variation;
+          // Family-only names ("<Family>_Other_variations") cover every sideline of the family: too broad.
+          if (next.length >= MIN_TAG_PLY && !tag.endsWith('_Other_variations')) {
             bucket.names.add(name);
-            bucket.tags.add(openingTags(name).variation);
+            if (!bucket.sides.has(tag)) bucket.sides.set(tag, new Set());
+            bucket.sides.get(tag)!.add(color);
           }
         }
         walk(node.next, next);
@@ -82,13 +85,19 @@ async function main() {
     levels: Object.fromEntries(
       Object.entries(perLevel).map(([level, b]) => [
         level,
-        { names: [...b.names].sort(), tags: [...b.tags].sort() },
+        {
+          names: [...b.names].sort(),
+          // Variation tag -> the color(s) we play in it at this level (the puzzle solver must be one of them).
+          tags: Object.fromEntries([...b.sides].sort(([a], [z]) => a.localeCompare(z)).map(([t, c]) => [t, [...c].sort()])),
+        },
       ]),
     ),
   };
   writeFileSync(join(ROOT, 'data', 'openings.json'), JSON.stringify(out, null, 1) + '\n');
   console.log(`named ${Object.keys(lines).length} lines`);
-  for (const [level, b] of Object.entries(out.levels)) console.log(`level ${level}: ${b.tags.join(', ')}`);
+  for (const [level, b] of Object.entries(out.levels)) {
+    console.log(`level ${level}: ${Object.entries(b.tags).map(([t, c]) => `${t} (${c.join('/')})`).join(', ')}`);
+  }
 }
 
 main().catch((err) => {

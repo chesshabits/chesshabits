@@ -189,316 +189,328 @@
  "levels": {
   "1": {
    "names": [
-    "Bishop's Opening",
     "Bishop's Opening: Berlin Defense",
-    "Caro-Kann Defense",
-    "Four Knights Game",
     "Four Knights Game: Italian Variation",
     "French Defense: Knight Variation",
-    "Italian Game",
     "Italian Game: Giuoco Piano",
     "Italian Game: Two Knights Defense",
-    "King's Knight Opening",
     "King's Knight Opening: Normal Variation",
     "King's Pawn Game: Damiano Defense",
     "King's Pawn Game: Wayward Queen Attack",
-    "Petrov's Defense",
     "Petrov's Defense: Three Knights Game",
-    "Philidor Defense",
-    "Queen's Gambit",
-    "Queen's Gambit Accepted",
     "Queen's Gambit Accepted: Central Variation, Alekhine System",
     "Queen's Gambit Accepted: Saduleto Variation",
     "Queen's Pawn Game: Accelerated London System",
     "Queen's Pawn Game: Symmetrical Variation",
     "Queen's Pawn Game: Zukertort Variation",
-    "Rapport-Jobava System",
-    "Scandinavian Defense",
     "Scandinavian Defense: Mieses-Kotrč Variation",
-    "Scotch Game",
     "Scotch Game: Lolli Variation",
-    "Sicilian Defense",
     "Sicilian Defense: Old Sicilian",
-    "Three Knights Opening",
-    "Vienna Game",
     "Vienna Game: Falkbeer Variation"
    ],
-   "tags": [
-    "Bishops_Opening_Berlin_Defense",
-    "Bishops_Opening_Other_variations",
-    "Caro-Kann_Defense_Other_variations",
-    "Four_Knights_Game_Italian_Variation",
-    "Four_Knights_Game_Other_variations",
-    "French_Defense_Knight_Variation",
-    "Italian_Game_Giuoco_Piano",
-    "Italian_Game_Other_variations",
-    "Italian_Game_Two_Knights_Defense",
-    "Kings_Knight_Opening_Normal_Variation",
-    "Kings_Knight_Opening_Other_variations",
-    "Kings_Pawn_Game_Damiano_Defense",
-    "Kings_Pawn_Game_Wayward_Queen_Attack",
-    "Petrovs_Defense_Other_variations",
-    "Petrovs_Defense_Three_Knights_Game",
-    "Philidor_Defense_Other_variations",
-    "Queens_Gambit_Accepted_Central_Variation",
-    "Queens_Gambit_Accepted_Other_variations",
-    "Queens_Gambit_Accepted_Saduleto_Variation",
-    "Queens_Gambit_Other_variations",
-    "Queens_Pawn_Game_Accelerated_London_System",
-    "Queens_Pawn_Game_Symmetrical_Variation",
-    "Queens_Pawn_Game_Zukertort_Variation",
-    "Rapport-Jobava_System_Other_variations",
-    "Scandinavian_Defense_Mieses-Kotroc_Variation",
-    "Scandinavian_Defense_Other_variations",
-    "Scotch_Game_Lolli_Variation",
-    "Scotch_Game_Other_variations",
-    "Sicilian_Defense_Old_Sicilian",
-    "Sicilian_Defense_Other_variations",
-    "Three_Knights_Opening_Other_variations",
-    "Vienna_Game_Falkbeer_Variation",
-    "Vienna_Game_Other_variations"
-   ]
+   "tags": {
+    "Bishops_Opening_Berlin_Defense": [
+     "black"
+    ],
+    "Four_Knights_Game_Italian_Variation": [
+     "white"
+    ],
+    "French_Defense_Knight_Variation": [
+     "white"
+    ],
+    "Italian_Game_Giuoco_Piano": [
+     "black"
+    ],
+    "Italian_Game_Two_Knights_Defense": [
+     "black"
+    ],
+    "Kings_Knight_Opening_Normal_Variation": [
+     "black",
+     "white"
+    ],
+    "Kings_Pawn_Game_Damiano_Defense": [
+     "white"
+    ],
+    "Kings_Pawn_Game_Wayward_Queen_Attack": [
+     "black"
+    ],
+    "Petrovs_Defense_Three_Knights_Game": [
+     "white"
+    ],
+    "Queens_Gambit_Accepted_Central_Variation": [
+     "black"
+    ],
+    "Queens_Gambit_Accepted_Saduleto_Variation": [
+     "black"
+    ],
+    "Queens_Pawn_Game_Accelerated_London_System": [
+     "black"
+    ],
+    "Queens_Pawn_Game_Symmetrical_Variation": [
+     "black"
+    ],
+    "Queens_Pawn_Game_Zukertort_Variation": [
+     "black"
+    ],
+    "Scandinavian_Defense_Mieses-Kotroc_Variation": [
+     "white"
+    ],
+    "Scotch_Game_Lolli_Variation": [
+     "black"
+    ],
+    "Sicilian_Defense_Old_Sicilian": [
+     "white"
+    ],
+    "Vienna_Game_Falkbeer_Variation": [
+     "black"
+    ]
+   }
   },
   "2": {
    "names": [
-    "Bishop's Opening",
-    "Caro-Kann Defense",
-    "Center Game",
-    "Center Game Accepted",
-    "Four Knights Game",
     "Four Knights Game: Italian Variation",
     "French Defense: Knight Variation",
-    "Italian Game",
     "Italian Game: Giuoco Piano",
-    "King's Gambit",
-    "King's Gambit Accepted",
     "King's Gambit Accepted: King's Knight's Gambit",
     "King's Gambit Accepted: Schallopp Defense",
-    "King's Knight Opening",
     "King's Knight Opening: Normal Variation",
     "King's Pawn Game: Damiano Defense",
-    "Philidor Defense",
-    "Queen's Gambit",
-    "Queen's Gambit Accepted",
     "Queen's Pawn Game: Accelerated London System",
     "Queen's Pawn Game: London System",
-    "Scandinavian Defense",
     "Scandinavian Defense: Mieses-Kotrč Variation",
-    "Scotch Game",
     "Scotch Game: Lolli Variation",
-    "Sicilian Defense",
     "Sicilian Defense: French Variation",
-    "Three Knights Opening",
-    "Vienna Game",
     "Vienna Game: Falkbeer Variation"
    ],
-   "tags": [
-    "Bishops_Opening_Other_variations",
-    "Caro-Kann_Defense_Other_variations",
-    "Center_Game_Accepted_Other_variations",
-    "Center_Game_Other_variations",
-    "Four_Knights_Game_Italian_Variation",
-    "Four_Knights_Game_Other_variations",
-    "French_Defense_Knight_Variation",
-    "Italian_Game_Giuoco_Piano",
-    "Italian_Game_Other_variations",
-    "Kings_Gambit_Accepted_Kings_Knights_Gambit",
-    "Kings_Gambit_Accepted_Other_variations",
-    "Kings_Gambit_Accepted_Schallopp_Defense",
-    "Kings_Gambit_Other_variations",
-    "Kings_Knight_Opening_Normal_Variation",
-    "Kings_Knight_Opening_Other_variations",
-    "Kings_Pawn_Game_Damiano_Defense",
-    "Philidor_Defense_Other_variations",
-    "Queens_Gambit_Accepted_Other_variations",
-    "Queens_Gambit_Other_variations",
-    "Queens_Pawn_Game_Accelerated_London_System",
-    "Queens_Pawn_Game_London_System",
-    "Scandinavian_Defense_Mieses-Kotroc_Variation",
-    "Scandinavian_Defense_Other_variations",
-    "Scotch_Game_Lolli_Variation",
-    "Scotch_Game_Other_variations",
-    "Sicilian_Defense_French_Variation",
-    "Sicilian_Defense_Other_variations",
-    "Three_Knights_Opening_Other_variations",
-    "Vienna_Game_Falkbeer_Variation",
-    "Vienna_Game_Other_variations"
-   ]
+   "tags": {
+    "Four_Knights_Game_Italian_Variation": [
+     "white"
+    ],
+    "French_Defense_Knight_Variation": [
+     "white"
+    ],
+    "Italian_Game_Giuoco_Piano": [
+     "black"
+    ],
+    "Kings_Gambit_Accepted_Kings_Knights_Gambit": [
+     "black"
+    ],
+    "Kings_Gambit_Accepted_Schallopp_Defense": [
+     "black"
+    ],
+    "Kings_Knight_Opening_Normal_Variation": [
+     "black",
+     "white"
+    ],
+    "Kings_Pawn_Game_Damiano_Defense": [
+     "white"
+    ],
+    "Queens_Pawn_Game_Accelerated_London_System": [
+     "black"
+    ],
+    "Queens_Pawn_Game_London_System": [
+     "black"
+    ],
+    "Scandinavian_Defense_Mieses-Kotroc_Variation": [
+     "white"
+    ],
+    "Scotch_Game_Lolli_Variation": [
+     "black"
+    ],
+    "Sicilian_Defense_French_Variation": [
+     "white"
+    ],
+    "Vienna_Game_Falkbeer_Variation": [
+     "black"
+    ]
+   }
   },
   "3": {
    "names": [
-    "Bishop's Opening",
-    "Caro-Kann Defense",
     "Caro-Kann Defense: Two Knights Attack",
     "Caro-Kann Defense: Two Knights Attack, Mindeno Variation",
     "Caro-Kann Defense: Two Knights Attack, Mindeno Variation, Retreat Line",
-    "Center Game",
-    "Center Game Accepted",
-    "Four Knights Game",
     "Four Knights Game: Scotch Variation",
     "Four Knights Game: Scotch Variation Accepted",
-    "French Defense",
     "French Defense: Exchange Variation",
     "French Defense: Normal Variation",
-    "Italian Game",
     "Italian Game: Classical Variation",
     "Italian Game: Giuoco Piano",
-    "King's Gambit",
-    "King's Gambit Accepted",
-    "King's Knight Opening",
     "King's Knight Opening: Normal Variation",
-    "Modern Defense",
     "Nimzo-Larsen Attack: Modern Variation",
-    "Petrov's Defense",
     "Petrov's Defense: Three Knights Game",
-    "Philidor Defense",
     "Philidor Defense: Exchange Variation",
-    "Ponziani Opening",
     "Ponziani Opening: Jaenisch Counterattack",
-    "Queen's Gambit",
-    "Queen's Gambit Accepted",
     "Queen's Gambit Accepted: Central Variation, Alekhine System",
     "Queen's Gambit Accepted: Saduleto Variation",
     "Queen's Pawn Game: Accelerated London System",
     "Queen's Pawn Game: Symmetrical Variation",
     "Queen's Pawn Game: Zukertort Variation",
-    "Ruy Lopez",
     "Ruy Lopez: Berlin Defense",
     "Ruy Lopez: Berlin Defense, Beverwijk Variation",
-    "Scandinavian Defense",
     "Scandinavian Defense: Mieses-Kotrč Variation",
-    "Sicilian Defense",
     "Sicilian Defense: Delayed Alapin Variation, with d6",
     "Sicilian Defense: Modern Variations",
     "Sicilian Defense: O'Kelly Variation",
     "Sicilian Defense: Old Sicilian",
-    "Three Knights Opening",
-    "Vienna Game",
     "Vienna Game: Falkbeer Variation"
    ],
-   "tags": [
-    "Bishops_Opening_Other_variations",
-    "Caro-Kann_Defense_Other_variations",
-    "Caro-Kann_Defense_Two_Knights_Attack",
-    "Center_Game_Accepted_Other_variations",
-    "Center_Game_Other_variations",
-    "Four_Knights_Game_Other_variations",
-    "Four_Knights_Game_Scotch_Variation",
-    "Four_Knights_Game_Scotch_Variation_Accepted",
-    "French_Defense_Exchange_Variation",
-    "French_Defense_Normal_Variation",
-    "French_Defense_Other_variations",
-    "Italian_Game_Classical_Variation",
-    "Italian_Game_Giuoco_Piano",
-    "Italian_Game_Other_variations",
-    "Kings_Gambit_Accepted_Other_variations",
-    "Kings_Gambit_Other_variations",
-    "Kings_Knight_Opening_Normal_Variation",
-    "Kings_Knight_Opening_Other_variations",
-    "Modern_Defense_Other_variations",
-    "Nimzo-Larsen_Attack_Modern_Variation",
-    "Petrovs_Defense_Other_variations",
-    "Petrovs_Defense_Three_Knights_Game",
-    "Philidor_Defense_Exchange_Variation",
-    "Philidor_Defense_Other_variations",
-    "Ponziani_Opening_Jaenisch_Counterattack",
-    "Ponziani_Opening_Other_variations",
-    "Queens_Gambit_Accepted_Central_Variation",
-    "Queens_Gambit_Accepted_Other_variations",
-    "Queens_Gambit_Accepted_Saduleto_Variation",
-    "Queens_Gambit_Other_variations",
-    "Queens_Pawn_Game_Accelerated_London_System",
-    "Queens_Pawn_Game_Symmetrical_Variation",
-    "Queens_Pawn_Game_Zukertort_Variation",
-    "Ruy_Lopez_Berlin_Defense",
-    "Ruy_Lopez_Other_variations",
-    "Scandinavian_Defense_Mieses-Kotroc_Variation",
-    "Scandinavian_Defense_Other_variations",
-    "Sicilian_Defense_Delayed_Alapin_Variation",
-    "Sicilian_Defense_Modern_Variations",
-    "Sicilian_Defense_OKelly_Variation",
-    "Sicilian_Defense_Old_Sicilian",
-    "Sicilian_Defense_Other_variations",
-    "Three_Knights_Opening_Other_variations",
-    "Vienna_Game_Falkbeer_Variation",
-    "Vienna_Game_Other_variations"
-   ]
+   "tags": {
+    "Caro-Kann_Defense_Two_Knights_Attack": [
+     "white"
+    ],
+    "Four_Knights_Game_Scotch_Variation": [
+     "white"
+    ],
+    "Four_Knights_Game_Scotch_Variation_Accepted": [
+     "white"
+    ],
+    "French_Defense_Exchange_Variation": [
+     "white"
+    ],
+    "French_Defense_Normal_Variation": [
+     "white"
+    ],
+    "Italian_Game_Classical_Variation": [
+     "black"
+    ],
+    "Italian_Game_Giuoco_Piano": [
+     "black"
+    ],
+    "Kings_Knight_Opening_Normal_Variation": [
+     "black",
+     "white"
+    ],
+    "Nimzo-Larsen_Attack_Modern_Variation": [
+     "black"
+    ],
+    "Petrovs_Defense_Three_Knights_Game": [
+     "white"
+    ],
+    "Philidor_Defense_Exchange_Variation": [
+     "white"
+    ],
+    "Ponziani_Opening_Jaenisch_Counterattack": [
+     "black"
+    ],
+    "Queens_Gambit_Accepted_Central_Variation": [
+     "black"
+    ],
+    "Queens_Gambit_Accepted_Saduleto_Variation": [
+     "black"
+    ],
+    "Queens_Pawn_Game_Accelerated_London_System": [
+     "black"
+    ],
+    "Queens_Pawn_Game_Symmetrical_Variation": [
+     "black"
+    ],
+    "Queens_Pawn_Game_Zukertort_Variation": [
+     "black"
+    ],
+    "Ruy_Lopez_Berlin_Defense": [
+     "black"
+    ],
+    "Scandinavian_Defense_Mieses-Kotroc_Variation": [
+     "white"
+    ],
+    "Sicilian_Defense_Delayed_Alapin_Variation": [
+     "white"
+    ],
+    "Sicilian_Defense_Modern_Variations": [
+     "white"
+    ],
+    "Sicilian_Defense_OKelly_Variation": [
+     "white"
+    ],
+    "Sicilian_Defense_Old_Sicilian": [
+     "white"
+    ],
+    "Vienna_Game_Falkbeer_Variation": [
+     "black"
+    ]
+   }
   },
   "4": {
    "names": [
-    "Caro-Kann Defense",
     "Caro-Kann Defense: Two Knights Attack",
-    "Center Game",
-    "Center Game Accepted",
     "English Opening: King's English Variation, Reversed Sicilian",
     "English Opening: King's English Variation, Two Knights Variation",
-    "Four Knights Game",
     "Four Knights Game: Scotch Variation",
     "Four Knights Game: Scotch Variation Accepted",
-    "French Defense",
     "French Defense: Exchange Variation",
     "French Defense: Normal Variation",
-    "Italian Game",
     "Italian Game: Giuoco Piano",
-    "King's Gambit",
-    "King's Knight Opening",
     "King's Knight Opening: Normal Variation",
-    "Philidor Defense",
-    "Pirc Defense",
-    "Queen's Gambit",
-    "Queen's Gambit Declined",
     "Queen's Gambit Declined: Modern Variation",
     "Queen's Gambit Declined: Normal Defense",
     "Queen's Gambit Declined: Queen's Knight Variation",
     "Queen's Pawn Game: Symmetrical Variation",
     "Queen's Pawn Game: Zukertort Variation",
-    "Ruy Lopez",
     "Ruy Lopez: Berlin Defense",
     "Ruy Lopez: Berlin Defense, Improved Steinitz Defense",
-    "Scandinavian Defense",
     "Scandinavian Defense: Modern Variation",
-    "Sicilian Defense",
     "Sicilian Defense: Delayed Alapin Variation, with d6",
     "Sicilian Defense: Modern Variations",
-    "Sicilian Defense: Old Sicilian",
-    "Three Knights Opening"
+    "Sicilian Defense: Old Sicilian"
    ],
-   "tags": [
-    "Caro-Kann_Defense_Other_variations",
-    "Caro-Kann_Defense_Two_Knights_Attack",
-    "Center_Game_Accepted_Other_variations",
-    "Center_Game_Other_variations",
-    "English_Opening_Kings_English_Variation",
-    "Four_Knights_Game_Other_variations",
-    "Four_Knights_Game_Scotch_Variation",
-    "Four_Knights_Game_Scotch_Variation_Accepted",
-    "French_Defense_Exchange_Variation",
-    "French_Defense_Normal_Variation",
-    "French_Defense_Other_variations",
-    "Italian_Game_Giuoco_Piano",
-    "Italian_Game_Other_variations",
-    "Kings_Gambit_Other_variations",
-    "Kings_Knight_Opening_Normal_Variation",
-    "Kings_Knight_Opening_Other_variations",
-    "Philidor_Defense_Other_variations",
-    "Pirc_Defense_Other_variations",
-    "Queens_Gambit_Declined_Modern_Variation",
-    "Queens_Gambit_Declined_Normal_Defense",
-    "Queens_Gambit_Declined_Other_variations",
-    "Queens_Gambit_Declined_Queens_Knight_Variation",
-    "Queens_Gambit_Other_variations",
-    "Queens_Pawn_Game_Symmetrical_Variation",
-    "Queens_Pawn_Game_Zukertort_Variation",
-    "Ruy_Lopez_Berlin_Defense",
-    "Ruy_Lopez_Other_variations",
-    "Scandinavian_Defense_Modern_Variation",
-    "Scandinavian_Defense_Other_variations",
-    "Sicilian_Defense_Delayed_Alapin_Variation",
-    "Sicilian_Defense_Modern_Variations",
-    "Sicilian_Defense_Old_Sicilian",
-    "Sicilian_Defense_Other_variations",
-    "Three_Knights_Opening_Other_variations"
-   ]
+   "tags": {
+    "Caro-Kann_Defense_Two_Knights_Attack": [
+     "white"
+    ],
+    "English_Opening_Kings_English_Variation": [
+     "black"
+    ],
+    "Four_Knights_Game_Scotch_Variation": [
+     "white"
+    ],
+    "Four_Knights_Game_Scotch_Variation_Accepted": [
+     "white"
+    ],
+    "French_Defense_Exchange_Variation": [
+     "white"
+    ],
+    "French_Defense_Normal_Variation": [
+     "white"
+    ],
+    "Italian_Game_Giuoco_Piano": [
+     "black"
+    ],
+    "Kings_Knight_Opening_Normal_Variation": [
+     "black",
+     "white"
+    ],
+    "Queens_Gambit_Declined_Modern_Variation": [
+     "black"
+    ],
+    "Queens_Gambit_Declined_Normal_Defense": [
+     "black"
+    ],
+    "Queens_Gambit_Declined_Queens_Knight_Variation": [
+     "black"
+    ],
+    "Queens_Pawn_Game_Symmetrical_Variation": [
+     "black"
+    ],
+    "Queens_Pawn_Game_Zukertort_Variation": [
+     "black"
+    ],
+    "Ruy_Lopez_Berlin_Defense": [
+     "black"
+    ],
+    "Scandinavian_Defense_Modern_Variation": [
+     "white"
+    ],
+    "Sicilian_Defense_Delayed_Alapin_Variation": [
+     "white"
+    ],
+    "Sicilian_Defense_Modern_Variations": [
+     "white"
+    ],
+    "Sicilian_Defense_Old_Sicilian": [
+     "white"
+    ]
+   }
   }
  }
 }
