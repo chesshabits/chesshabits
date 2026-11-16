@@ -194,7 +194,7 @@ export function BrowsePage({ level, desktop, counts }: Props) {
         </span>
         <span>ply {line.length}</span>
       </div>
-      <div className="m-board edge">{board}</div>
+      <div className="m-board">{board}</div>
       {header}
       <Tabs tabs={['moves here', 'line', 'drill'] as const} value={tab} onChange={setTab} />
       {tab === 'moves here' && movesHere}

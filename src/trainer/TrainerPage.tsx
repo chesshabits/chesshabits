@@ -261,7 +261,7 @@ export function TrainerPage({ level, color, desktop, counts }: Props) {
           {run.line.length} / {MAX_PLY}
         </span>
       </div>
-      <div className="m-board edge">{board}</div>
+      <div className="m-board">{board}</div>
       {prompt}
       <PromptButtons t={t} className="btn-bar" />
       <Tabs tabs={['moves', 'replies', 'today'] as const} value={tab} onChange={setTab} />

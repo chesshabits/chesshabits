@@ -825,16 +825,12 @@ cg-board square.check {
 }
 
 .m-board {
+  /* Edge to edge on phones; on tablets, capped so the prompt stays on screen. */
   width: 100%;
-  max-width: min(100%, calc(100dvh - 260px));
-  min-width: min(100%, 280px);
+  max-width: max(min(100%, 420px), calc(100dvh - 330px));
   margin: 0 auto;
   border-top: 1px solid var(--line3);
   border-bottom: 1px solid var(--line3);
-}
-
-.m-board.edge {
-  max-width: 100%;
 }
 
 .m-tabs {

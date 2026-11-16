@@ -209,7 +209,7 @@ export function TacticsPage({ level, desktop, counts }: Props) {
         </span>
         <span>{p?.rating ?? ''}</span>
       </div>
-      <div className="m-board edge">{board}</div>
+      <div className="m-board">{board}</div>
       {prompt}
       <Buttons t={t} finished={finished} className="btn-bar" />
       <Tabs tabs={['puzzle', 'themes', 'stats'] as const} value={tab} onChange={setTab} />
