@@ -6,11 +6,16 @@
     ["center-control"],
     ["castle-quickly", "develop-aggressively"],
     ["no-hanging-pieces", "take-free-pieces"],
+    ["rpm"],
     ["endgame-king-activity", "attack-pawns"]
   ],
   "extraKnowledge": [],
+  "trainer": {
+    "spacedRepetition": false
+  },
   "tactics": {
     "themes": ["hangingPiece", "mateIn1", "fork", "pin", "skewer", "discoveredAttack"],
+    "weights": { "hangingPiece": 0.5 },
     "excludeThemes": ["sacrifice"],
     "ratingMin": 700,
     "ratingMax": 1400,

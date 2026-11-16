@@ -25,6 +25,8 @@ export interface TacticsConfig {
   ratingMax: number;
   /** Number of puzzles to ship for this level. */
   target: number;
+  /** Share of the set reserved for a theme, e.g. { hangingPiece: 0.5 }. */
+  weights?: Record<string, number>;
 }
 
 /** Per-level habit configuration (data/levels/level-N.json, SPEC §3 / §3.1). */
@@ -34,6 +36,10 @@ export interface LevelConfig {
   /** Habit IDs, grouped where the series pairs them (e.g. no-hanging-pieces + take-free-pieces). */
   habits: string[][];
   extraKnowledge: string[];
+  trainer: {
+    /** false: simple practice mode with no due/new schedule (SPEC §5.1). */
+    spacedRepetition: boolean;
+  };
   tactics: TacticsConfig;
 }
 
@@ -54,6 +60,11 @@ export function habit(id: string): Habit {
   const h = HABITS[id];
   if (!h) throw new Error(`Unknown habit ID: ${id}`);
   return h;
+}
+
+/** Opening names are shown only from the level whose habits include openings (SPEC §3: Level 3). */
+export function showsOpeningNames(level: LevelId): boolean {
+  return CONFIGS[level].habits.flat().includes('basic-openings-and-responses');
 }
 
 /** Every habit ID a level config refers to. */

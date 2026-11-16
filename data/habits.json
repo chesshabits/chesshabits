@@ -113,6 +113,14 @@
       "phase": 4,
       "guidance": "Before every move, check whether anything of theirs can be taken for free."
     },
+    "rpm": {
+      "label": "rpms (random pawn moves)",
+      "kinds": ["check"],
+      "source": "Soft check, no detector yet: once the user's minor pieces are developed and the king has castled, count quiet queenside pawn moves vs aimless piece moves.",
+      "difficulty": "medium",
+      "phase": 3,
+      "guidance": "Once your pieces are developed, you've castled and there's nothing useful for them to do, push a queenside pawn instead of shuffling pieces around."
+    },
     "endgame-king-activity": {
       "label": "active king in the endgame",
       "kinds": ["check"],

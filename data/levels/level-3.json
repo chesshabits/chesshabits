@@ -1,5 +1,6 @@
 {
   "level": 3,
+  "$todo": "rpm: confirm whether the series still uses RPMs at this level, then add [\"rpm\"] to habits.",
   "restrictions": ["never-resign", "no-gambits", "no-sacrifices"],
   "habits": [
     ["basic-and-advanced-tactics"],
@@ -9,6 +10,9 @@
     ["endgame-king-activity", "attack-pawns"]
   ],
   "extraKnowledge": [],
+  "trainer": {
+    "spacedRepetition": true
+  },
   "tactics": {
     "themes": [
       "hangingPiece", "mateIn1", "fork", "pin", "skewer", "discoveredAttack",

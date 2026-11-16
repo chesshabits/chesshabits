@@ -1,5 +1,6 @@
 {
   "level": 4,
+  "$todo": "rpm: confirm whether the series still uses RPMs at this level, then add [\"rpm\"] to habits.",
   "restrictions": [],
   "habits": [
     ["basic-and-advanced-tactics"],
@@ -15,6 +16,9 @@
     "trade-when-up-not-when-down",
     "rook-placement"
   ],
+  "trainer": {
+    "spacedRepetition": true
+  },
   "tactics": {
     "themes": [
       "hangingPiece", "mateIn1", "fork", "pin", "skewer", "discoveredAttack",

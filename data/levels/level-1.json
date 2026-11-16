@@ -7,11 +7,17 @@
     ["castle-asap"],
     ["always-trade"],
     ["no-hanging-pieces", "take-free-pieces"],
+    ["rpm"],
     ["endgame-king-activity", "attack-pawns"]
   ],
   "extraKnowledge": [],
+  "trainer": {
+    "$comment": "spacedRepetition false = simple practice mode (no due/new schedule); see SPEC §5.1.",
+    "spacedRepetition": false
+  },
   "tactics": {
     "themes": ["hangingPiece", "mateIn1"],
+    "weights": { "hangingPiece": 0.6 },
     "excludeThemes": ["sacrifice"],
     "ratingMin": 400,
     "ratingMax": 1100,
