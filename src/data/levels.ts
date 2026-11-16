@@ -1,4 +1,5 @@
 import repertoireJson from '../../data/repertoire-data.json';
+import overridesJson from '../../data/repertoire-overrides.json';
 
 export type LevelId = 1 | 2 | 3 | 4;
 
@@ -63,6 +64,32 @@ export function loadRepertoire(): RepertoireData {
   return repertoireJson as RepertoireData;
 }
 
+export interface RepertoireOverrides {
+  prune: { tree: string; line: string; reason: string }[];
+}
+
+/** Remove the pruned lines (data/repertoire-overrides.json) from a copy of the trees. */
+export function applyOverrides(
+  trees: Record<TreeKey, RepertoireTree>,
+  overrides: RepertoireOverrides,
+): Record<TreeKey, RepertoireTree> {
+  const out = structuredClone(trees);
+  for (const { tree, line } of overrides.prune) {
+    const t = out[tree as TreeKey];
+    if (!t) continue;
+    const moves = line.split(' ');
+    const last = moves.pop()!;
+    let children: Record<string, MoveNode> | undefined = t.tree;
+    for (const san of moves) children = children?.[san]?.next;
+    if (children) delete children[last];
+  }
+  return out;
+}
+
+let trees: Record<TreeKey, RepertoireTree> | null = null;
+
+/** The level's tree with manual overrides applied. */
 export function getTree(level: LevelId, color: Color): RepertoireTree {
-  return loadRepertoire().trees[`level${level}_${color}`];
+  trees ??= applyOverrides(loadRepertoire().trees, overridesJson as RepertoireOverrides);
+  return trees[`level${level}_${color}`];
 }

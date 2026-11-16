@@ -1,0 +1,87 @@
+{
+  "$comment": "Short explanations for key repertoire decisions, keyed by the line before the move (SAN, space-separated), then by the move. Written for this project. Moves without a note get a generic explanation from src/trainer/explain.ts.",
+  "notes": {
+    "": {
+      "e4": "Open with 1.e4 at every level: take the center and free the queen and the light-squared bishop."
+    },
+    "e4 e5": {
+      "Nf3": "Develop and attack e5 straight away."
+    },
+    "e4 e5 Nf3 Nc6": {
+      "Nc3": "The simple system: both knights out, then the bishop, then castle."
+    },
+    "e4 e5 Nf3 Nc6 Nc3 Nf6": {
+      "Bc4": "The bishop takes its most active diagonal, aiming at f7. Castle next.",
+      "d4": "Hit the center while Black's pieces are still at home (the Scotch Four Knights)."
+    },
+    "e4 e5 Nf3 d6": {
+      "Nc3": "Keep developing: the system doesn't change against the Philidor.",
+      "d4": "Against the Philidor, challenge e5 at once, before Black is set up."
+    },
+    "e4 e5 Nf3 Nf6": {
+      "Nc3": "Defend e4 with a developing move and keep the game in familiar Four Knights shapes."
+    },
+    "e4 c5": {
+      "Nf3": "Develop toward the center, the same knight move as against 1...e5."
+    },
+    "e4 c5 Nf3 Nc6": {
+      "Nc3": "Stick to the system: second knight out, then the bishop and castle.",
+      "c3": "The Alapin idea: prepare d4 so a pawn, not a piece, recaptures in the center."
+    },
+    "e4 c5 Nf3 d6": {
+      "c3": "The Alapin idea: prepare d4 so a pawn, not a piece, recaptures in the center."
+    },
+    "e4 c5 Nf3 e6": {
+      "Nc3": "Stick to the system: second knight out, then the bishop and castle."
+    },
+    "e4 e6": {
+      "Nf3": "Develop and keep it simple; no French theory needed at this level.",
+      "d4": "Take the full center. After ...d5, exchange on d5."
+    },
+    "e4 e6 d4 d5": {
+      "exd5": "The Exchange French: an open, symmetrical position where quick development is easy."
+    },
+    "e4 d5": {
+      "exd5": "Take the pawn: Black has to spend time winning it back."
+    },
+    "e4 d5 exd5 Qxd5": {
+      "Nc3": "Develop with tempo: the knight attacks the queen."
+    },
+    "e4 d5 exd5 Nf6": {
+      "d4": "Take the center while Black spends time regaining the pawn."
+    },
+    "e4 c6": {
+      "Nf3": "Develop first; the set-up stays the same against the Caro-Kann."
+    },
+    "e4 c6 Nf3 d5": {
+      "exd5": "Exchange to open the position for quick development.",
+      "Nc3": "Defend e4 with a piece and keep the tension (the Two Knights)."
+    },
+    "e4": {
+      "e5": "Meet 1.e4 with 1...e5: an equal share of the center and open lines for the bishop and queen."
+    },
+    "e4 e5 Nf3": {
+      "Nc6": "Defend e5 while developing."
+    },
+    "e4 e5 Nf3 Nc6 Bc4": {
+      "Bc5": "Mirror White: the bishop goes to c5, aiming at f2.",
+      "Nf6": "Develop and hit e4."
+    },
+    "e4 e5 Nf3 Nc6 d4": {
+      "exd4": "Take the pawn. The center opens and your pieces come out quickly."
+    },
+    "e4 e5 Qh5": {
+      "Nc6": "Defend e5 with a piece. Watch f7: if a bishop comes to c4, block with ...g6."
+    },
+    "d4": {
+      "d5": "Meet 1.d4 with 1...d5: an equal share of the center."
+    },
+    "d4 d5 c4": {
+      "dxc4": "Take the gambit pawn (Queen's Gambit Accepted), then develop quickly; don't cling to it.",
+      "e6": "The Queen's Gambit Declined: hold d5 with a pawn and develop behind it."
+    },
+    "d4 d5 Bf4": {
+      "Nf6": "Against the London, develop the knight toward the center."
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "$comment": "Manual edits on top of the generated trees (SPEC §4.4). `prune` removes a move and everything after it from one tree. Use it for lines from the low-level games that only demonstrate a mistake.",
+  "prune": [
+    {
+      "tree": "level1_black",
+      "line": "d4 d5 Bf4 Nf6 Nc3 Nc6 Nb5 Bf5",
+      "reason": "...Bf5 allows Nxc7+ forking king and rook; the series game continued Kd7 Nxa8. Not a line to drill."
+    }
+  ]
+}
