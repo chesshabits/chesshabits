@@ -1,16 +1,15 @@
 import type { ReactNode } from 'react';
 import { SERIES_URL, SOURCE_URL, SUPPORT_URL } from '../config';
 import { NOTICES } from '../data/notices';
-import { Sec } from './Panels';
+import { Section } from './Panels';
 
 function Notices() {
   return (
-    <>
-      <Sec>third-party notices</Sec>
-      {NOTICES.map((n, i) => (
+    <Section id="notices" title="third-party notices" icon="file" summary={NOTICES.length}>
+      {NOTICES.map((n) => (
         <a
           key={n.name}
-          className={i === NOTICES.length - 1 ? 'row end' : 'row'}
+          className="row"
           href={n.url}
           target="_blank"
           rel="noopener noreferrer"
@@ -20,7 +19,7 @@ function Notices() {
           <span className="count">{n.license}</span>
         </a>
       ))}
-    </>
+    </Section>
   );
 }
 
@@ -120,7 +119,7 @@ export function ReviewPage({ desktop, left }: { desktop: boolean; left: ReactNod
         level, and where you left the repertoire. Missed habits will turn into personal puzzles later on.
       </p>
       <p>
-        Until then: drill the <a href="#/openings/white">repertoire</a> and the{' '}
+        Until then: drill the <a href="#/repertoire/white">repertoire</a> and the{' '}
         <a href="#/tactics">opening tactics</a>.
       </p>
     </article>

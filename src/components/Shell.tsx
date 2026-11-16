@@ -4,7 +4,7 @@ import { LEVELS, formatRatingRange, type LevelId } from '../data/levels';
 import { routeHref, type Page } from '../hooks';
 import { ThemeToggle } from './theme';
 
-const PAGES: Page[] = ['openings', 'tactics', 'review', 'about'];
+const PAGES: Page[] = ['repertoire', 'tactics', 'review', 'about'];
 
 // Placeholders until the URLs exist (SPEC §11): both fall back to the About page.
 const seriesHref = SERIES_URL ?? '#/about';
@@ -22,7 +22,7 @@ function Logo() {
 
 function Brand() {
   return (
-    <a href={routeHref('openings')} className="brand" aria-label="chesshabits.io, home">
+    <a href={routeHref('repertoire')} className="brand" aria-label="chesshabits.io, home">
       <Logo />
       chesshabits.io
     </a>

@@ -77,7 +77,7 @@ export function deckStats(
   return { total: positions.length, due, fresh, done: today.done };
 }
 
-export type TargetKind = 'due' | 'new' | 'free';
+export type TargetKind = 'due' | 'new' | 'retry' | 'next' | 'free';
 
 export interface Target {
   kind: TargetKind;
@@ -127,4 +127,31 @@ export function nextOpponentMove(
 /** Is the line still heading for the target position? */
 export function onTargetPath(line: Line, target: Line | null): boolean {
   return !!target && line.length <= target.length && line.every((san, i) => san === target[i]);
+}
+
+/** Practice mode (levels without spaced repetition): what this session has covered. */
+export interface PracticeSession {
+  /** Positions answered this session. */
+  seen: ReadonlySet<string>;
+  /** Missed positions -> lines started since the miss. */
+  missed: ReadonlyMap<string, number>;
+}
+
+/** Lines to wait before a missed position comes back, so it isn't the very next one. */
+export const RETRY_AFTER = 1;
+
+/**
+ * Practice mode: retry a missed position once another line has been played, else cycle to the
+ * most-reached position not yet played this session, else play freely.
+ */
+export function practiceTarget(positions: readonly DecisionPosition[], session: PracticeSession): Target {
+  let retry: { line: string[]; since: number } | null = null;
+  for (const p of positions) {
+    const since = session.missed.get(p.key);
+    if (since !== undefined && since >= RETRY_AFTER && (!retry || since > retry.since)) retry = { line: p.line, since };
+  }
+  if (retry) return { kind: 'retry', line: retry.line };
+  const next = positions.find((p) => !session.seen.has(p.key));
+  if (next) return { kind: 'next', line: next.line };
+  return { kind: 'free', line: null };
 }

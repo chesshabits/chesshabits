@@ -7,6 +7,7 @@
   --fg: #fafafa;
   --dim: #a1a1a1;
   --muted: #171717;
+  --head: #111111;
   --line: #2a2a2a;
   --line2: #1c1c1c;
   --line3: #3a3a3a;
@@ -27,6 +28,7 @@
   --fg: #0a0a0a;
   --dim: #5f5f5f;
   --muted: #f5f5f5;
+  --head: #fafafa;
   --line: #e5e5e5;
   --line2: #f0f0f0;
   --line3: #d4d4d4;
@@ -46,7 +48,7 @@
   --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
   --prose: Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --side: 280px;
-  --head: 56px;
+  --bar-h: 56px;
 }
 
 *,
@@ -116,15 +118,17 @@ a {
 /* ---------- shell ---------- */
 
 .shell {
-  min-height: 100vh;
-  min-height: 100dvh;
+  /* App shell: header and footer stay put; each column scrolls on its own. */
+  height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .header {
-  flex: 0 0 var(--head);
-  height: var(--head);
+  flex: 0 0 var(--bar-h);
+  height: var(--bar-h);
   display: flex;
   align-items: stretch;
   border-bottom: 1px solid var(--line);
@@ -210,6 +214,15 @@ a {
   min-width: 0;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.side,
+.center,
+.m-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line3) transparent;
 }
 
 .side.left {
@@ -226,12 +239,27 @@ a {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   padding: 32px 24px;
   gap: 16px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Centered vertically when it fits, scrollable from the top when it doesn't. */
+.center > :first-child {
+  margin-top: auto;
+}
+
+.center > :last-child {
+  margin-bottom: auto;
+}
+
+.center.top > :first-child {
+  margin-top: 0;
 }
 
 .footer {
+  flex: 0 0 auto;
   display: flex;
   align-items: stretch;
   border-top: 1px solid var(--line);
@@ -296,6 +324,11 @@ a {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* A dim label next to a value: keep the label whole and let the value wrap. */
+.row > span.dim:first-child {
+  flex: none;
 }
 
 a.row,
@@ -393,6 +426,126 @@ button.row:hover {
   padding: 0 20px 14px;
   font-size: 11px;
   color: var(--dim);
+}
+
+/* ---------- collapsible sections ---------- */
+
+.group-head {
+  width: 100%;
+  height: 44px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 20px 0 14px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: left;
+  background: var(--head);
+  color: var(--fg);
+  border-bottom: 1px solid var(--line);
+}
+
+.group-head .chev {
+  flex: none;
+  color: var(--dim);
+  transition: transform 180ms ease;
+}
+
+.group[data-open='false'] .group-head .chev {
+  transform: rotate(-90deg);
+}
+
+.group-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.group-sum {
+  flex: none;
+  color: var(--dim);
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* Height animates via the 0fr/1fr grid-row trick; opacity fades alongside. */
+.group-body {
+  display: grid;
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition:
+    grid-template-rows 180ms ease,
+    opacity 180ms ease;
+}
+
+.group[data-open='false'] .group-body {
+  grid-template-rows: 0fr;
+  opacity: 0;
+}
+
+.group-clip {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.group-clip {
+  border-bottom: 1px solid var(--line);
+}
+
+.group-guide {
+  margin-left: 20px;
+  border-left: 1px solid var(--line3);
+}
+
+.group[data-open='false'] .group-clip {
+  border-bottom-color: transparent;
+}
+
+.group-guide .row,
+.group-guide .habit summary,
+.group-guide .progress-row,
+.group-guide .empty {
+  padding-left: 16px;
+  padding-right: 20px;
+}
+
+.group-guide .habit p,
+.group-guide .habit .tags {
+  padding-left: 16px;
+  padding-right: 20px;
+}
+
+.group-guide .moves-grid {
+  grid-template-columns: 36px repeat(2, minmax(0, 1fr));
+  padding-left: 16px;
+  padding-right: 20px;
+}
+
+.group-guide .row,
+.group-guide .habit,
+.group-guide .moves-grid,
+.group-guide .progress-row,
+.group-guide .empty,
+.group-guide .btn-bar {
+  border-bottom: 1px solid var(--line2);
+}
+
+.group-guide > :last-child,
+.group-guide > :last-child > :last-child {
+  border-bottom: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .group-body,
+  .group-head .chev {
+    transition: none;
+  }
 }
 
 /* ---------- prompt ---------- */
@@ -663,9 +816,6 @@ cg-board square.check {
   margin: 0 0 12px;
 }
 
-.center.top {
-  justify-content: flex-start;
-}
 
 .picker {
   width: min(100%, 480px);
@@ -716,7 +866,7 @@ cg-board square.check {
 }
 
 .m-header {
-  flex: 0 0 var(--head);
+  flex: 0 0 var(--bar-h);
   display: flex;
   align-items: stretch;
   border-bottom: 1px solid var(--line);
@@ -753,7 +903,7 @@ cg-board square.check {
 
 .level-menu {
   position: absolute;
-  top: var(--head);
+  top: var(--bar-h);
   left: 0;
   right: 0;
   z-index: 20;
@@ -781,7 +931,7 @@ cg-board square.check {
 }
 
 .m-tabbar {
-  flex: 0 0 var(--head);
+  flex: 0 0 var(--bar-h);
   display: flex;
   border-top: 1px solid var(--line);
   background: var(--bg);
@@ -865,6 +1015,24 @@ cg-board square.check {
   line-height: 1.45;
 }
 
+.m-shell .group-head {
+  padding: 0 16px 0 12px;
+}
+
+.m-shell .group-guide {
+  margin-left: 16px;
+}
+
+.m-shell .group-guide .row,
+.m-shell .group-guide .habit summary,
+.m-shell .group-guide .progress-row,
+.m-shell .group-guide .empty,
+.m-shell .group-guide .moves-grid,
+.m-shell .group-guide .habit p {
+  padding-left: 14px;
+  padding-right: 16px;
+}
+
 .m-shell .sec,
 .m-shell .row,
 .m-shell .habit summary,
@@ -918,4 +1086,8 @@ cg-board square.check {
 
 .center.board-area {
   --board: min(100%, 600px, max(320px, calc(100vh - 240px)));
+}
+
+.m-shell .btn-pair button {
+  height: 44px;
 }

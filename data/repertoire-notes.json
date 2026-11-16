@@ -1,5 +1,5 @@
 {
-  "$comment": "Short explanations for key repertoire decisions, keyed by the line before the move (SAN, space-separated), then by the move. Written for this project. Moves without a note get a generic explanation from src/trainer/explain.ts.",
+  "$comment": "Short explanations for key repertoire decisions, keyed by the line before the move (SAN, space-separated), then by the move. Written for this project. Moves without a note get a generic explanation from src/trainer/explain.ts. Notes on moves played at Levels 1-2 must not name openings (names start at Level 3).",
   "notes": {
     "": {
       "e4": "Open with 1.e4 at every level: take the center and free the queen and the light-squared bishop."
@@ -15,11 +15,11 @@
       "d4": "Hit the center while Black's pieces are still at home (the Scotch Four Knights)."
     },
     "e4 e5 Nf3 d6": {
-      "Nc3": "Keep developing: the system doesn't change against the Philidor.",
+      "Nc3": "Keep developing: the plan doesn't change when Black defends e5 with a pawn.",
       "d4": "Against the Philidor, challenge e5 at once, before Black is set up."
     },
     "e4 e5 Nf3 Nf6": {
-      "Nc3": "Defend e4 with a developing move and keep the game in familiar Four Knights shapes."
+      "Nc3": "Defend e4 with a developing move and keep to the plan: both knights out first."
     },
     "e4 c5": {
       "Nf3": "Develop toward the center, the same knight move as against 1...e5."
@@ -35,7 +35,7 @@
       "Nc3": "Stick to the system: second knight out, then the bishop and castle."
     },
     "e4 e6": {
-      "Nf3": "Develop and keep it simple; no French theory needed at this level.",
+      "Nf3": "Develop and keep it simple: the same knights-first plan works here.",
       "d4": "Take the full center. After ...d5, exchange on d5."
     },
     "e4 e6 d4 d5": {
@@ -51,7 +51,7 @@
       "d4": "Take the center while Black spends time regaining the pawn."
     },
     "e4 c6": {
-      "Nf3": "Develop first; the set-up stays the same against the Caro-Kann."
+      "Nf3": "Develop first; the set-up stays the same against 1...c6."
     },
     "e4 c6 Nf3 d5": {
       "exd5": "Exchange to open the position for quick development.",
@@ -77,11 +77,11 @@
       "d5": "Meet 1.d4 with 1...d5: an equal share of the center."
     },
     "d4 d5 c4": {
-      "dxc4": "Take the gambit pawn (Queen's Gambit Accepted), then develop quickly; don't cling to it.",
+      "dxc4": "Take the pawn White offers, then develop quickly; don't cling to it.",
       "e6": "The Queen's Gambit Declined: hold d5 with a pawn and develop behind it."
     },
     "d4 d5 Bf4": {
-      "Nf6": "Against the London, develop the knight toward the center."
+      "Nf6": "Against the early Bf4, develop the knight toward the center."
     }
   }
 }

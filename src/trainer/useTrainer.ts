@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Chess } from 'chess.js';
 import type { Key } from 'chessground/types';
 import { getStore, startOfDay, type ReviewRecord } from '../db';
+import { levelConfig } from '../data/habits';
 import { LEVELS, getTree, type Color, type LevelId } from '../data/levels';
 import { explainMove, moveLabel, replay } from './explain';
 import { gradeMove } from './grade';
@@ -14,6 +15,7 @@ import {
   nextOpponentMove,
   onTargetPath,
   pickTarget,
+  practiceTarget,
   type CardRecord,
   type DeckStats,
   type Target,
@@ -87,6 +89,18 @@ export function useTrainer(level: LevelId, color: Color) {
   );
   const positions = useMemo(() => decisionPositions(tree, color), [tree, color]);
   const deck = deckId(level, color);
+  /** L3–L4 schedule positions with SM-2; L1–L2 just practise (SPEC §5.1). Attempts are stored either way. */
+  const spaced = levelConfig(level).trainer.spacedRepetition;
+
+  // Practice-mode session: positions answered, misses waiting for a retry, and totals.
+  const [practice, setPractice] = useState(() => ({
+    seen: new Set<string>(),
+    missed: new Map<string, number>(),
+    played: 0,
+    correct: 0,
+  }));
+  const practiceRef = useRef(practice);
+  practiceRef.current = practice;
 
   const [cards, setCards] = useState<Map<string, CardRecord> | null>(null);
   const [today, setToday] = useState<{ done: Set<string>; introduced: Set<string> }>({
@@ -130,7 +144,18 @@ export function useTrainer(level: LevelId, color: Color) {
     if (!c) return;
     const t = todayRef.current;
     const pool = positions.filter((p) => !skipped.current.has(p.key));
-    const target = pickTarget(pool, c, { done: t.done.size, introduced: t.introduced.size }, Date.now());
+    let target: Target;
+    if (spaced) {
+      target = pickTarget(pool, c, { done: t.done.size, introduced: t.introduced.size }, Date.now());
+    } else {
+      // A new line starts: every pending miss is one line older.
+      const p = practiceRef.current;
+      const missed = new Map([...p.missed].map(([k, n]) => [k, n + 1]));
+      target = practiceTarget(pool, { seen: p.seen, missed });
+      const next = { ...p, missed };
+      practiceRef.current = next;
+      setPractice(next);
+    }
     setRun((r) => ({
       ...initialRun(),
       sync: r.sync + 1,
@@ -138,7 +163,7 @@ export function useTrainer(level: LevelId, color: Color) {
       phase: color === 'white' ? 'user' : 'opponent',
       decisionKey: color === 'white' ? '' : null,
     }));
-  }, [positions, color]);
+  }, [positions, color, spaced]);
 
   // First line once the deck is loaded.
   useEffect(() => {
@@ -198,6 +223,17 @@ export function useTrainer(level: LevelId, color: Color) {
         done: scheduled ? new Set(t.done).add(id) : t.done,
         introduced: wasNew ? new Set(t.introduced).add(id) : t.introduced,
       }));
+      setPractice((p) => {
+        const missed = new Map(p.missed);
+        if (rating === 'again' || rating === 'soft') missed.set(key, 0);
+        else missed.delete(key);
+        return {
+          seen: new Set(p.seen).add(key),
+          missed,
+          played: p.played + 1,
+          correct: p.correct + (correct ? 1 : 0),
+        };
+      });
       const review: ReviewRecord = { deck, cardId: id, at: now, rating, scheduled, wasNew };
       void getStore().then(async (s) => {
         await s.putCard(card);
@@ -315,9 +351,19 @@ export function useTrainer(level: LevelId, color: Color) {
   const skip = useCallback(() => {
     const r = runRef.current;
     const key = r.target.line ? lineKey(r.target.line) : r.decisionKey;
-    if (key !== null && r.phase !== 'complete') skipped.current.add(key);
+    if (key !== null && r.phase !== 'complete') {
+      if (spaced) {
+        skipped.current.add(key);
+      } else {
+        // Practice: count it as covered so the cycle moves on; a pending miss still comes back.
+        const p = practiceRef.current;
+        const next = { ...p, seen: new Set(p.seen).add(key) };
+        practiceRef.current = next;
+        setPractice(next);
+      }
+    }
     startRun();
-  }, [startRun]);
+  }, [startRun, spaced]);
 
   const stats: DeckStats | null = useMemo(
     () => (cards ? deckStats(positions, cards, { done: today.done.size, introduced: today.introduced.size }, Date.now()) : null),
@@ -328,11 +374,21 @@ export function useTrainer(level: LevelId, color: Color) {
   const expected = run.phase === 'user' || run.phase === 'retry' ? candidatesAt(tree, run.line) : [];
   const decisionCard = run.decisionKey !== null ? (cards?.get(run.decisionKey) ?? null) : null;
 
+  const practiceStats = {
+    played: practice.played,
+    correct: practice.correct,
+    retry: practice.missed.size,
+    covered: practice.seen.size,
+    total: positions.length,
+  };
+
   return {
     tree,
     positions,
     run,
+    spaced,
     stats,
+    practiceStats,
     expected,
     decisionCard,
     startRun,

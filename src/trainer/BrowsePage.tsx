@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { Key } from 'chessground/types';
 import { Board } from '../components/Board';
-import { DrillNav, HabitsPanel, MoveList, Row, Sec, Tabs, type DrillCounts } from '../components/Panels';
+import { DrillNav, HabitsPanel, MoveList, Row, Section, Tabs, type DrillCounts } from '../components/Panels';
+import { showsOpeningNames } from '../data/habits';
 import { getTree, type Color, type LevelId } from '../data/levels';
 import { openingName, shortOpeningName } from '../data/openings';
 import { useKeys } from '../hooks';
@@ -101,18 +102,17 @@ export function BrowsePage({ level, desktop, counts }: Props) {
   );
 
   const movesHere = (
-    <>
-      <Sec>{yours ? 'your move here' : `${toMove}'s replies here`} · series games</Sec>
+    <Section
+      id="browse-moves"
+      title={yours ? 'your move here' : `${toMove}'s replies`}
+      icon={yours ? 'target' : 'reply'}
+      summary={`${total} games`}
+    >
       {candidates.length === 0 ? (
         <div className="empty">End of the tree.</div>
       ) : (
-        candidates.map((c, i) => (
-          <button
-            key={c.san}
-            type="button"
-            className={i === candidates.length - 1 ? 'row end' : 'row'}
-            onClick={() => play(c.san)}
-          >
+        candidates.map((c) => (
+          <button key={c.san} type="button" className="row" onClick={() => play(c.san)}>
             <span className={yours ? 'accent' : 'fg'}>
               {moveLabel(line.length, c.san)}
             </span>
@@ -122,11 +122,11 @@ export function BrowsePage({ level, desktop, counts }: Props) {
           </button>
         ))
       )}
-    </>
+    </Section>
   );
 
   const lineList = (
-    <>
+    <Section id="line" title="line" icon="list" summary={`ply ${line.length}`}>
       <MoveList line={line} viewPly={null} onView={(ply) => setLine((l) => l.slice(0, ply))} />
       <div className="btn-bar">
         <button type="button" onClick={() => setLine((l) => l.slice(0, -1))} disabled={line.length === 0}>
@@ -136,10 +136,11 @@ export function BrowsePage({ level, desktop, counts }: Props) {
           start
         </button>
       </div>
-    </>
+    </Section>
   );
 
-  const name = shortOpeningName(openingName(line));
+  // Opening names only from Level 3 (SPEC §7.1).
+  const name = showsOpeningNames(level) ? shortOpeningName(openingName(line)) : null;
   const board = (
     <Board
       fen={view.chess.fen()}
@@ -157,17 +158,18 @@ export function BrowsePage({ level, desktop, counts }: Props) {
     return (
       <>
         <aside className="side left" aria-label="Drills">
-          <Sec>tree</Sec>
-          <Row label="series games" value={tree.games} />
-          <Row end label="positions to learn" value={positions} />
-          <DrillNav page="openings" mode="browse" counts={counts} />
+          <Section id="tree" title="tree" icon="branch" summary={`${tree.games} games`}>
+            <Row label="series games" value={tree.games} />
+            <Row label="positions to learn" value={positions} />
+          </Section>
+          <DrillNav page="repertoire" mode="browse" counts={counts} level={level} />
           <HabitsPanel level={level} />
         </aside>
         <main className="center board-area">
           <div className="board-strip">
             <span>{color} repertoire</span>
             <span>
-              {name} · ply {line.length}
+              {name ? `${name} · ` : ''}ply {line.length}
             </span>
           </div>
           <div className="board-frame">{board}</div>
@@ -179,7 +181,6 @@ export function BrowsePage({ level, desktop, counts }: Props) {
         <aside className="side right" aria-label="Moves">
           {header}
           {movesHere}
-          <Sec>line</Sec>
           {lineList}
         </aside>
       </>
@@ -190,7 +191,8 @@ export function BrowsePage({ level, desktop, counts }: Props) {
     <>
       <div className="m-strip">
         <span>
-          {color} · {name}
+          {color}
+          {name ? ` · ${name}` : ''}
         </span>
         <span>ply {line.length}</span>
       </div>
@@ -201,7 +203,7 @@ export function BrowsePage({ level, desktop, counts }: Props) {
       {tab === 'line' && lineList}
       {tab === 'drill' && (
         <>
-          <DrillNav page="openings" mode="browse" counts={counts} />
+          <DrillNav page="repertoire" mode="browse" counts={counts} level={level} />
           <HabitsPanel level={level} />
         </>
       )}

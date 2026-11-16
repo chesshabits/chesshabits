@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { DrawShape } from 'chessground/draw';
 import type { Color as CgColor, Key } from 'chessground/types';
 import { Board } from '../components/Board';
-import { DrillNav, HabitsPanel, MoveList, Row, Sec, Tabs, TodayPanel, type DrillCounts } from '../components/Panels';
+import { DrillNav, HabitsPanel, MoveList, PracticePanel, Row, Section, Tabs, TodayPanel, type DrillCounts } from '../components/Panels';
+import { showsOpeningNames } from '../data/habits';
 import type { Color, LevelId } from '../data/levels';
 import { openingName, shortOpeningName } from '../data/openings';
 import { useKeys, useNow } from '../hooks';
@@ -13,7 +14,7 @@ import { squaresOf, useTrainer, type Feedback } from './useTrainer';
 
 const MAX_PLY = 12;
 const other = (c: Color): Color => (c === 'white' ? 'black' : 'white');
-const TARGET_LABEL = { due: 'review', new: 'new position', free: 'practice' } as const;
+const TARGET_LABEL = { due: 'review', new: 'new position', retry: 'retry a miss', next: 'next position', free: 'practice' } as const;
 
 function FeedbackLine({ f }: { f: Feedback }) {
   if (f.kind === 'correct') {
@@ -73,7 +74,7 @@ export function TrainerPage({ level, color, desktop, counts }: Props) {
   const now = useNow();
   const [flipped, setFlipped] = useState(false);
   const [viewPly, setViewPly] = useState<number | null>(null);
-  const [tab, setTab] = useState<'moves' | 'replies' | 'today'>('moves');
+  const [tab, setTab] = useState<'moves' | 'replies' | 'progress'>('moves');
 
   // A new move or a new line returns the board to the live position.
   useEffect(() => setViewPly(null), [run.line.length, run.sync]);
@@ -156,48 +157,52 @@ export function TrainerPage({ level, color, desktop, counts }: Props) {
   // Opponent replies at the last opponent move ("black's replies here · series games").
   const replyLine = lastOppIndex >= 0 ? run.line.slice(0, lastOppIndex) : [];
   const replies = lastOppIndex >= 0 || color === 'black' ? candidatesAt(t.tree, replyLine) : [];
+  const replyGames = replies.reduce((n, c) => n + c.n, 0);
   const repliesPanel = (
-    <>
-      <Sec>{opp}'s replies here · series games</Sec>
+    <Section id="replies" title={`${opp}'s replies`} icon="reply" summary={replies.length ? `${replyGames} games` : undefined}>
       {replies.length === 0 ? (
         <div className="empty">White moves first: no replies yet.</div>
       ) : (
-        replies.map((c, i) => (
-          <div key={c.san} className={i === replies.length - 1 ? 'row end' : 'row'}>
+        replies.map((c) => (
+          <div key={c.san} className="row">
             <span className={c.san === run.line[lastOppIndex] ? 'accent' : undefined}>{moveLabel(replyLine.length, c.san)}</span>
             <span className="count">{c.n}</span>
           </div>
         ))
       )}
-    </>
+    </Section>
   );
 
   const card = t.decisionCard;
   const historyPanel = (
-    <>
-      <Row
-        label="this position"
-        value={card ? `seen ${card.seen}× · ${card.correct} ✓` : run.decisionKey !== null ? 'new' : '—'}
-      />
-      <Row
-        end
-        label="next review"
-        value={card ? formatDue(card.due, now) : run.decisionKey !== null ? 'after this' : '—'}
-      />
-    </>
+    <Section
+      id="position"
+      title="this position"
+      icon="clock"
+      summary={card ? `${card.correct} / ${card.seen} ✓` : run.decisionKey !== null ? 'new' : undefined}
+    >
+      <Row label="seen" value={card ? `${card.seen}× · ${card.correct} ✓` : run.decisionKey !== null ? 'not yet' : '—'} />
+      {t.spaced && (
+        <Row label="next review" value={card ? formatDue(card.due, now) : run.decisionKey !== null ? 'after this' : '—'} />
+      )}
+    </Section>
   );
 
   const movesPanel = (
-    <MoveList
-      line={run.line}
-      viewPly={viewPly}
-      onView={(ply) => setViewPly(ply === run.line.length ? null : ply)}
-      pending={run.phase === 'user' || run.phase === 'retry'}
-      highlightLast={run.phase === 'user'}
-    />
+    <Section id="moves" title="moves" icon="list" summary={`ply ${run.line.length}`}>
+      <MoveList
+        line={run.line}
+        viewPly={viewPly}
+        onView={(ply) => setViewPly(ply === run.line.length ? null : ply)}
+        pending={run.phase === 'user' || run.phase === 'retry'}
+        highlightLast={run.phase === 'user'}
+      />
+    </Section>
   );
 
-  const name = shortOpeningName(openingName(run.line));
+  // Opening names only from Level 3, where openings become a habit (SPEC §7.1).
+  const name = showsOpeningNames(level) ? shortOpeningName(openingName(run.line)) : null;
+  const progressPanel = t.spaced ? <TodayPanel stats={t.stats} /> : <PracticePanel stats={t.practiceStats} />;
   const top = orientation === 'white' ? 'black' : 'white';
   const glyph = (c: Color) => (c === 'white' ? '♔' : '♚');
   const who = (c: Color) => (c === color ? `you · ${c}` : `${c} · series replies`);
@@ -218,9 +223,9 @@ export function TrainerPage({ level, color, desktop, counts }: Props) {
   if (desktop) {
     return (
       <>
-        <aside className="side left" aria-label="Today and drills">
-          <TodayPanel stats={t.stats} />
-          <DrillNav page="openings" mode={color} counts={counts} />
+        <aside className="side left" aria-label="Progress and drills">
+          {progressPanel}
+          <DrillNav page="repertoire" mode={color} counts={counts} level={level} />
           <HabitsPanel level={level} />
         </aside>
         <main className="center board-area">
@@ -229,7 +234,7 @@ export function TrainerPage({ level, color, desktop, counts }: Props) {
               {glyph(top)} {who(top)}
             </span>
             <span>
-              {name} · ply {run.line.length} / {MAX_PLY}
+              {name ? `${name} · ` : ''}ply {run.line.length} / {MAX_PLY}
             </span>
           </div>
           <div className="board-frame">{board}</div>
@@ -242,7 +247,6 @@ export function TrainerPage({ level, color, desktop, counts }: Props) {
         </main>
         <aside className="side right" aria-label="Your move">
           {prompt}
-          <Sec>moves</Sec>
           {movesPanel}
           {repliesPanel}
           {historyPanel}
@@ -255,7 +259,8 @@ export function TrainerPage({ level, color, desktop, counts }: Props) {
     <>
       <div className="m-strip">
         <span>
-          {glyph(opp)} {opp} · {name}
+          {glyph(opp)} {opp}
+          {name ? ` · ${name}` : ''}
         </span>
         <span>
           {run.line.length} / {MAX_PLY}
@@ -264,7 +269,12 @@ export function TrainerPage({ level, color, desktop, counts }: Props) {
       <div className="m-board">{board}</div>
       {prompt}
       <PromptButtons t={t} className="btn-bar" />
-      <Tabs tabs={['moves', 'replies', 'today'] as const} value={tab} onChange={setTab} />
+      <Tabs
+        tabs={['moves', 'replies', 'progress'] as const}
+        labels={{ progress: t.spaced ? 'today' : 'practice' }}
+        value={tab}
+        onChange={setTab}
+      />
       {tab === 'moves' && movesPanel}
       {tab === 'replies' && (
         <>
@@ -272,10 +282,10 @@ export function TrainerPage({ level, color, desktop, counts }: Props) {
           {historyPanel}
         </>
       )}
-      {tab === 'today' && (
+      {tab === 'progress' && (
         <>
-          <TodayPanel stats={t.stats} />
-          <DrillNav page="openings" mode={color} counts={counts} />
+          {progressPanel}
+          <DrillNav page="repertoire" mode={color} counts={counts} level={level} />
           <HabitsPanel level={level} />
         </>
       )}

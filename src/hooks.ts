@@ -15,7 +15,7 @@ export function useMediaQuery(query: string): boolean {
 
 export const DESKTOP_QUERY = '(min-width: 1024px)';
 
-export type Page = 'openings' | 'tactics' | 'review' | 'about';
+export type Page = 'repertoire' | 'tactics' | 'review' | 'about';
 export type OpeningsMode = 'white' | 'black' | 'browse';
 
 export interface Route {
@@ -31,12 +31,13 @@ export function parseHash(hash: string): Route {
     case 'about':
       return { page, mode: 'white' };
     default:
-      return { page: 'openings', mode: sub === 'black' || sub === 'browse' ? sub : 'white' };
+      // "#/openings/..." is the old name of "#/repertoire/...", kept so old links work.
+      return { page: 'repertoire', mode: sub === 'black' || sub === 'browse' ? sub : 'white' };
   }
 }
 
 export function routeHref(page: Page, mode?: OpeningsMode): string {
-  return page === 'openings' ? `#/openings/${mode ?? 'white'}` : `#/${page}`;
+  return page === 'repertoire' ? `#/repertoire/${mode ?? 'white'}` : `#/${page}`;
 }
 
 export function useRoute(): Route {

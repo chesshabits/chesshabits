@@ -6,10 +6,12 @@ Everything runs in the browser: no accounts, no backend. Progress is stored loca
 
 ## What's in it
 
-- **Repertoire trainer** (`#/openings/white`, `#/openings/black`): the app plays the opponent's replies from the series games (weighted by how often each was played); you play the repertoire move. Wrong moves show the right one with a short reason; a sound move from another level counts as "not our line". Each position is scheduled with spaced repetition (SM-2), so missed positions come back sooner.
-- **Browse lines** (`#/openings/browse`): walk the level's opening tree with game counts.
-- **Opening tactics** (`#/tactics`): Lichess puzzles from the repertoire's openings, filtered by the level's themes and rating range.
+- **Repertoire trainer** (`#/repertoire/white`, `#/repertoire/black`): the app plays the opponent's replies from the series games (weighted by how often each was played); you play the repertoire move. Wrong moves show the right one with a short reason; a sound move from another level counts as "not our line". Levels 1–2 use a simple practice mode (cycle through the system, misses come back later in the session); Levels 3–4 schedule each position with spaced repetition (SM-2). Set per level in `data/levels/level-N.json` (`trainer.spacedRepetition`).
+- **Browse lines** (`#/repertoire/browse`): walk the level's tree with game counts.
+- **Tactics** (`#/tactics`): Lichess puzzles from the repertoire's lines, with the solver on our side, filtered by the level's themes and rating range and weighted toward hanging pieces at Levels 1–2.
 - **Level habits**: the habits and restrictions for each level, from `data/levels/level-N.json`.
+
+Opening names appear from Level 3, where openings become one of the habits.
 
 Keyboard: `f` flip, `h` hint, `s` skip, `←`/`→` step through the line, `n`/`Enter` next.
 

@@ -39,3 +39,19 @@ export function loadTheme(): Theme {
 export function saveTheme(theme: Theme): void {
   write(THEME_KEY, theme);
 }
+
+const SECTIONS_KEY = 'chesshabits.sections';
+
+/** Which sidebar sections are open (true) or collapsed (false); missing = open. */
+export function loadSections(): Record<string, boolean> {
+  try {
+    const parsed: unknown = JSON.parse(read(SECTIONS_KEY) ?? '{}');
+    return parsed && typeof parsed === 'object' ? (parsed as Record<string, boolean>) : {};
+  } catch {
+    return {};
+  }
+}
+
+export function saveSections(state: Record<string, boolean>): void {
+  write(SECTIONS_KEY, JSON.stringify(state));
+}

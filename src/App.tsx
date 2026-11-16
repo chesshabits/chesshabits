@@ -38,13 +38,13 @@ function Pages({ level, onLevel, desktop }: { level: LevelId | null; onLevel: (l
   const counts = useDrillCounts(level);
 
   useEffect(() => {
-    const titles = { openings: 'openings', tactics: 'tactics', review: 'game review', about: 'about' };
+    const titles = { repertoire: 'repertoire', tactics: 'tactics', review: 'game review', about: 'about' };
     document.title = `${titles[route.page]} · Chess Habits`;
   }, [route.page]);
 
   const left: ReactNode = level ? (
     <>
-      <DrillNav page={route.page} mode={route.mode} counts={counts} />
+      <DrillNav page={route.page} mode={route.mode} counts={counts} level={level} />
       <HabitsPanel level={level} />
     </>
   ) : null;

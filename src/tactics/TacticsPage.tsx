@@ -2,8 +2,8 @@ import { useMemo, useState } from 'react';
 import type { DrawShape } from 'chessground/draw';
 import type { Key } from 'chessground/types';
 import { Board } from '../components/Board';
-import { DrillNav, HabitsPanel, ProgressRow, Row, Sec, Tabs, type DrillCounts } from '../components/Panels';
-import { levelConfig } from '../data/habits';
+import { DrillNav, HabitsPanel, ProgressRow, Row, Section, Tabs, type DrillCounts } from '../components/Panels';
+import { levelConfig, showsOpeningNames } from '../data/habits';
 import type { LevelId } from '../data/levels';
 import { tagLabel } from '../data/openings';
 import { useKeys } from '../hooks';
@@ -93,14 +93,17 @@ export function TacticsPage({ level, desktop, counts }: Props) {
     </div>
   );
 
+  // Opening names only from Level 3 (SPEC §7.1); puzzles still come from our lines at every level.
+  const namesOpenings = showsOpeningNames(level);
   const info = p && (
-    <>
-      <Sec>puzzle</Sec>
+    <Section id="puzzle" title="puzzle" icon="grid" summary={p.rating}>
       <Row label="rating" value={p.rating} />
-      <div className="row">
-        <span className="dim">opening</span>
-        <span style={{ textAlign: 'right' }}>{p.opening ? tagLabel(p.opening) : '—'}</span>
-      </div>
+      {namesOpenings && (
+        <div className="row">
+          <span className="dim">opening</span>
+          <span style={{ textAlign: 'right' }}>{p.opening ? tagLabel(p.opening) : '—'}</span>
+        </div>
+      )}
       <div className="row">
         <span className="dim">themes</span>
         <span style={{ textAlign: 'right' }}>
@@ -110,25 +113,24 @@ export function TacticsPage({ level, desktop, counts }: Props) {
         </span>
       </div>
       <Row label="moves" value={`${Math.ceil((solutionMoves(p).length - 1) / 2)} to find`} />
-      <a className="row end" href={`https://lichess.org/training/${p.id}`} target="_blank" rel="noopener noreferrer">
+      <a className="row" href={`https://lichess.org/training/${p.id}`} target="_blank" rel="noopener noreferrer">
         <span>on lichess</span>
         <span className="count">#{p.id} ↗</span>
       </a>
-    </>
+    </Section>
   );
 
   const filter = (
-    <>
-      <Sec>themes · level {level}</Sec>
+    <Section id="themes" title={`themes · level ${level}`} icon="tag" summary={theme ? themeLabel(theme) : 'all'}>
       <button type="button" className="row" aria-pressed={theme === null} onClick={() => setTheme(null)}>
         <span>all</span>
         <span className="count">{t.puzzles?.length ?? '…'}</span>
       </button>
-      {themeCounts.map((x, i) => (
+      {themeCounts.map((x) => (
         <button
           key={x.theme}
           type="button"
-          className={i === themeCounts.length - 1 ? 'row end' : 'row'}
+          className="row"
           aria-pressed={theme === x.theme}
           onClick={() => setTheme(x.theme)}
         >
@@ -136,18 +138,17 @@ export function TacticsPage({ level, desktop, counts }: Props) {
           <span className="count">{x.n}</span>
         </button>
       ))}
-    </>
+    </Section>
   );
 
   const total = t.puzzles?.length ?? 0;
   const statsPanel = (
-    <>
-      <Sec>tactics</Sec>
+    <Section id="tactics" title="tactics" icon="bars" summary={`${t.session.solved} ✓`}>
       <Row label="this session" value={`${t.session.solved} ✓ · ${t.session.failed} ✕`} />
       <Row label="streak" value={t.session.streak} />
       <Row label="today" value={t.stats?.today ?? '…'} />
-      <ProgressRow label="tried" done={t.stats?.attempted ?? 0} total={total} />
-    </>
+      <ProgressRow label="tried" done={t.stats?.attempted ?? 0} total={total} what="puzzles tried" />
+    </Section>
   );
 
   const board = (
@@ -163,7 +164,7 @@ export function TacticsPage({ level, desktop, counts }: Props) {
     />
   );
 
-  const opening = p?.opening ? tagLabel(p.opening) : '';
+  const opening = namesOpenings && p?.opening ? tagLabel(p.opening) : '';
   const glyph = (c: string) => (c === 'white' ? '♔' : '♚');
   const top = orientation === 'white' ? 'black' : 'white';
   const bottom = orientation;
@@ -174,7 +175,7 @@ export function TacticsPage({ level, desktop, counts }: Props) {
       <>
         <aside className="side left" aria-label="Tactics progress and drills">
           {statsPanel}
-          <DrillNav page="tactics" mode="white" counts={counts} />
+          <DrillNav page="tactics" mode="white" counts={counts} level={level} />
           <HabitsPanel level={level} />
         </aside>
         <main className="center board-area">
@@ -205,7 +206,8 @@ export function TacticsPage({ level, desktop, counts }: Props) {
     <>
       <div className="m-strip">
         <span>
-          {glyph(solver)} {solver} to move · {opening}
+          {glyph(solver)} {solver} to move
+          {opening ? ` · ${opening}` : ''}
         </span>
         <span>{p?.rating ?? ''}</span>
       </div>
@@ -218,7 +220,7 @@ export function TacticsPage({ level, desktop, counts }: Props) {
       {tab === 'stats' && (
         <>
           {statsPanel}
-          <DrillNav page="tactics" mode="white" counts={counts} />
+          <DrillNav page="tactics" mode="white" counts={counts} level={level} />
           <HabitsPanel level={level} />
         </>
       )}

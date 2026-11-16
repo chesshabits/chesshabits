@@ -9,6 +9,7 @@ import {
   nextOpponentMove,
   onTargetPath,
   pickTarget,
+  practiceTarget,
 } from './session';
 import { countDecisionPositions } from './tree';
 
@@ -135,5 +136,39 @@ describe('repertoire overrides', () => {
     const black1 = getTree(1, 'black');
     const nb5 = black1.tree.d4.next!.d5.next!.Bf4.next!.Nf6.next!.Nc3.next!.Nc6.next!.Nb5;
     expect(nb5?.next?.Bf5).toBeUndefined();
+  });
+});
+
+describe('practiceTarget', () => {
+  const positions = decisionPositions(tree, 'white');
+
+  it('cycles through positions not yet played this session', () => {
+    expect(practiceTarget(positions, { seen: new Set(), missed: new Map() })).toEqual({ kind: 'next', line: [] });
+    expect(practiceTarget(positions, { seen: new Set(['', 'e4 e5']), missed: new Map() })).toEqual({
+      kind: 'next',
+      line: ['e4', 'e5', 'Nf3', 'Nc6'],
+    });
+  });
+
+  it('brings a miss back after another line, oldest miss first', () => {
+    const seen = new Set(['', 'e4 e5', 'e4 e5 Nf3 Nc6', 'e4 c5']);
+    expect(practiceTarget(positions, { seen, missed: new Map([['e4 c5', 0]]) }).kind).toBe('free');
+    expect(practiceTarget(positions, { seen, missed: new Map([['e4 c5', 1], ['e4 e5', 3]]) })).toEqual({
+      kind: 'retry',
+      line: ['e4', 'e5'],
+    });
+  });
+});
+
+describe('opening names in explanations', () => {
+  it('never name an opening for a move drilled at Levels 1-2', () => {
+    const names = /philidor|caro|french|sicilian|alapin|london|gambit|scotch|italian|four knights|two knights|petrov|scandinavian|queen's|king's/i;
+    for (const level of [1, 2] as const) {
+      for (const color of ['white', 'black'] as const) {
+        for (const p of decisionPositions(getTree(level, color), color)) {
+          for (const c of p.expected) expect(explainMove(p.line, c.san), `${p.key} ${c.san}`).not.toMatch(names);
+        }
+      }
+    }
   });
 });
