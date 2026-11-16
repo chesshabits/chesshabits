@@ -5,3 +5,4 @@ dist
 .env*
 coverage
 SPEC.md
+.cache
