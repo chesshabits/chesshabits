@@ -1,9 +1,17 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="Free, open-source drills for good chess habits and a simple, level-based opening repertoire." />
+    <meta name="theme-color" content="#0A0A0A" />
     <title>Chess Habits</title>
+    <script>
+      // Apply the saved theme before first paint. Default is dark regardless of the OS setting.
+      try {
+        if (localStorage.getItem('chesshabits.theme') === 'light') document.documentElement.dataset.theme = 'light';
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="root"></div>
