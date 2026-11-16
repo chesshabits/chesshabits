@@ -1,0 +1,213 @@
+{
+  "$comment": "Habit catalog (SPEC §3.1). One entry per stable habit ID. `kinds`: check = detectable in a game, drill = trainable with puzzles, info = guidance only. `source` says how it is detected or drilled; `phase` is when the check/drill is planned. Per-level selection lives in data/levels/level-N.json.",
+  "habits": {
+    "no-premoves": {
+      "label": "no premoves",
+      "kinds": ["check"],
+      "source": "Move time from %clk deltas: about 0.1s means a premove.",
+      "difficulty": "easy",
+      "phase": 3,
+      "guidance": "Think on every move. A premove skips the one look that catches a hanging piece."
+    },
+    "premoves-under-10s": {
+      "label": "premoves only under 10s",
+      "kinds": ["check"],
+      "source": "Move time from %clk deltas; allowed only when the clock is under 10 seconds.",
+      "difficulty": "easy",
+      "phase": 3,
+      "guidance": "Premove only when your clock is almost out. Otherwise, look at the board first."
+    },
+    "no-tactics": {
+      "label": "no tactics",
+      "kinds": ["info"],
+      "source": "Guidance only.",
+      "difficulty": null,
+      "phase": null,
+      "guidance": "Don't hunt for combinations yet. Develop, keep your pieces safe and take what is free."
+    },
+    "no-gambits": {
+      "label": "no gambits",
+      "kinds": ["check"],
+      "source": "no-sacrifices restricted to pawns in roughly the first 12 moves.",
+      "difficulty": "medium",
+      "phase": 4,
+      "guidance": "Don't give away pawns in the opening for a vague attack. Keep material level and develop."
+    },
+    "no-sacrifices": {
+      "label": "no sacrifices",
+      "kinds": ["check"],
+      "source": "Material given up and not won back within 2 plies (not a forced recapture). Stockfish separates sound sacrifices from blunders.",
+      "difficulty": "medium",
+      "phase": 4,
+      "guidance": "Don't give up material unless you can see it come back. Solid beats speculative."
+    },
+    "never-resign": {
+      "label": "never resign",
+      "kinds": ["check"],
+      "source": "PGN termination: the user lost by resignation.",
+      "difficulty": "trivial",
+      "phase": 3,
+      "guidance": "Play it out. Opponents at every level miss wins, stalemate and flag."
+    },
+    "know-piece-moves": {
+      "label": "know how the pieces move",
+      "kinds": ["info"],
+      "source": "Guidance only.",
+      "difficulty": null,
+      "phase": null,
+      "guidance": "Be fluent with every piece, including castling, en passant and promotion."
+    },
+    "center-control": {
+      "label": "center control",
+      "kinds": ["check"],
+      "source": "Score central squares occupied or attacked through the opening (soft).",
+      "difficulty": "fuzzy",
+      "phase": 3,
+      "guidance": "Put pawns and pieces where they touch d4, e4, d5 and e5."
+    },
+    "castle-asap": {
+      "label": "castle asap",
+      "kinds": ["check"],
+      "source": "Plies where castling was legal and not played; the move number when the user castled (or never).",
+      "difficulty": "easy",
+      "phase": 3,
+      "guidance": "Castle as soon as it is legal. A safe king makes everything else easier."
+    },
+    "castle-quickly": {
+      "label": "castle quickly",
+      "kinds": ["check"],
+      "source": "Plies where castling was legal and not played; the move number when the user castled (or never).",
+      "difficulty": "easy",
+      "phase": 3,
+      "guidance": "Get the king safe early, usually within the first ten moves."
+    },
+    "develop-aggressively": {
+      "label": "develop aggressively",
+      "kinds": ["check"],
+      "source": "Minor pieces still on their starting squares after move N; the same piece moved twice before all minors are out.",
+      "difficulty": "easy",
+      "phase": 3,
+      "guidance": "Bring every minor piece out before moving any piece twice."
+    },
+    "always-trade": {
+      "label": "always trade",
+      "kinds": ["check"],
+      "source": "An equal trade was available and declined (low weight; informational).",
+      "difficulty": "medium",
+      "phase": 3,
+      "guidance": "When an even trade is on offer, take it. Fewer pieces means fewer things to blunder."
+    },
+    "no-hanging-pieces": {
+      "label": "no hanging pieces",
+      "kinds": ["check", "drill"],
+      "source": "After the user's move, any user piece that loses material by static exchange evaluation. Confirmed with Stockfish.",
+      "difficulty": "medium",
+      "phase": 4,
+      "guidance": "Before every move, check that each of your pieces is defended or safe."
+    },
+    "take-free-pieces": {
+      "label": "take free pieces",
+      "kinds": ["check", "drill"],
+      "source": "The opponent left material capturable with a positive static exchange and the user didn't take it. Confirmed with Stockfish.",
+      "difficulty": "medium",
+      "phase": 4,
+      "guidance": "Before every move, check whether anything of theirs can be taken for free."
+    },
+    "endgame-king-activity": {
+      "label": "active king in the endgame",
+      "kinds": ["check"],
+      "source": "In the endgame (non-pawn material under a threshold): the king's distance from the center over time, and king moves.",
+      "difficulty": "medium",
+      "phase": 3,
+      "guidance": "Once the queens are off, march the king to the middle. It is a fighting piece."
+    },
+    "attack-pawns": {
+      "label": "attack pawns",
+      "kinds": ["check"],
+      "source": "In the endgame, moves that attack or win enemy pawns (soft).",
+      "difficulty": "hard",
+      "phase": 4,
+      "guidance": "In the endgame, go after their pawns: every one you win is a potential queen."
+    },
+    "basic-tactics": {
+      "label": "basic tactics",
+      "kinds": ["drill"],
+      "source": "Lichess puzzles filtered by theme and repertoire opening (pin, fork, skewer, discovery).",
+      "difficulty": null,
+      "phase": 1,
+      "guidance": "Learn the four basic patterns: pin, fork, skewer and discovered attack."
+    },
+    "basic-and-advanced-tactics": {
+      "label": "basic and advanced tactics",
+      "kinds": ["drill"],
+      "source": "Lichess puzzles filtered by theme and repertoire opening.",
+      "difficulty": null,
+      "phase": 1,
+      "guidance": "Add deflection, attraction, clearance, interference and in-between moves to the basics."
+    },
+    "basic-openings-and-responses": {
+      "label": "openings and responses",
+      "kinds": ["drill", "check"],
+      "source": "Repertoire trainer; game review reports where the user left the repertoire.",
+      "difficulty": "medium",
+      "phase": 1,
+      "guidance": "Know a set answer to each common reply, one opening per color."
+    },
+    "active-not-reactive": {
+      "label": "be active, not reactive",
+      "kinds": ["info"],
+      "source": "Guidance only.",
+      "difficulty": null,
+      "phase": null,
+      "guidance": "Make your own threats instead of only answering theirs."
+    },
+    "opposition-pawn-rook-endgames": {
+      "label": "opposition, pawn and rook endgames",
+      "kinds": ["drill"],
+      "source": "Hand-curated endgame positions played against Stockfish (§5.4).",
+      "difficulty": null,
+      "phase": 4,
+      "guidance": "Know the opposition and the basic king-and-pawn and rook endings cold."
+    },
+    "lucena-philidor-n-vs-b": {
+      "label": "lucena, philidor, knight vs bishop",
+      "kinds": ["drill"],
+      "source": "Hand-curated endgame positions played against Stockfish (§5.4).",
+      "difficulty": null,
+      "phase": 4,
+      "guidance": "Win the Lucena, hold the Philidor, and know when a knight beats a bishop."
+    },
+    "trade-when-up-not-when-down": {
+      "label": "trade when up, not when down",
+      "kinds": ["check"],
+      "source": "Trades started vs material balance.",
+      "difficulty": "medium",
+      "phase": 3,
+      "guidance": "Ahead in material, simplify. Behind, keep pieces on and look for chances."
+    },
+    "rook-placement": {
+      "label": "rook placement",
+      "kinds": ["info"],
+      "source": "Guidance only.",
+      "difficulty": null,
+      "phase": null,
+      "guidance": "Rooks belong on open files, on the seventh rank and behind passed pawns."
+    },
+    "all-checkmate-patterns": {
+      "label": "all checkmate patterns",
+      "kinds": ["drill"],
+      "source": "Lichess puzzles filtered by checkmate-pattern themes and repertoire opening.",
+      "difficulty": null,
+      "phase": 1,
+      "guidance": "Recognize the named mates: back rank, smothered, Anastasia, Arabian, Boden and more."
+    },
+    "pawn-structure-weak-pawns": {
+      "label": "pawn structure, weak pawns",
+      "kinds": ["info"],
+      "source": "Guidance only.",
+      "difficulty": null,
+      "phase": null,
+      "guidance": "Spot isolated, doubled and backward pawns, yours and theirs, and play against the weak ones."
+    }
+  }
+}

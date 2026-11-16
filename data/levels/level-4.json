@@ -1,0 +1,34 @@
+{
+  "level": 4,
+  "restrictions": [],
+  "habits": [
+    ["basic-and-advanced-tactics"],
+    ["basic-openings-and-responses"],
+    ["all-checkmate-patterns"],
+    ["no-hanging-pieces", "take-free-pieces"],
+    ["pawn-structure-weak-pawns"]
+  ],
+  "extraKnowledge": [
+    "never-resign",
+    "opposition-pawn-rook-endgames",
+    "lucena-philidor-n-vs-b",
+    "trade-when-up-not-when-down",
+    "rook-placement"
+  ],
+  "tactics": {
+    "themes": [
+      "hangingPiece", "mateIn1", "fork", "pin", "skewer", "discoveredAttack",
+      "deflection", "attraction", "clearance", "interference", "intermezzo", "xRayAttack",
+      "trappedPiece", "capturingDefender", "doubleCheck", "discoveredCheck", "quietMove",
+      "attackingF2F7", "mateIn2",
+      "backRankMate", "smotheredMate", "anastasiaMate", "arabianMate", "bodenMate",
+      "doubleBishopMate", "dovetailMate", "hookMate", "epauletteMate", "pillsburysMate",
+      "operaMate", "cornerMate", "swallowstailMate", "triangleMate", "morphysMate",
+      "killBoxMate", "blindSwineMate", "vukovicMate", "balestraMate", "mateIn3"
+    ],
+    "excludeThemes": [],
+    "ratingMin": 1300,
+    "ratingMax": 2200,
+    "target": 1000
+  }
+}

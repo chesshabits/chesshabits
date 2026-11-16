@@ -1,0 +1,19 @@
+{
+  "level": 2,
+  "restrictions": ["no-gambits", "no-sacrifices", "premoves-under-10s", "never-resign"],
+  "habits": [
+    ["basic-tactics"],
+    ["center-control"],
+    ["castle-quickly", "develop-aggressively"],
+    ["no-hanging-pieces", "take-free-pieces"],
+    ["endgame-king-activity", "attack-pawns"]
+  ],
+  "extraKnowledge": [],
+  "tactics": {
+    "themes": ["hangingPiece", "mateIn1", "fork", "pin", "skewer", "discoveredAttack"],
+    "excludeThemes": ["sacrifice"],
+    "ratingMin": 700,
+    "ratingMax": 1400,
+    "target": 1000
+  }
+}

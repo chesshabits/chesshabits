@@ -1,0 +1,24 @@
+{
+  "level": 3,
+  "restrictions": ["never-resign", "no-gambits", "no-sacrifices"],
+  "habits": [
+    ["basic-and-advanced-tactics"],
+    ["basic-openings-and-responses"],
+    ["active-not-reactive"],
+    ["no-hanging-pieces", "take-free-pieces"],
+    ["endgame-king-activity", "attack-pawns"]
+  ],
+  "extraKnowledge": [],
+  "tactics": {
+    "themes": [
+      "hangingPiece", "mateIn1", "fork", "pin", "skewer", "discoveredAttack",
+      "deflection", "attraction", "clearance", "interference", "intermezzo", "xRayAttack",
+      "trappedPiece", "capturingDefender", "doubleCheck", "discoveredCheck", "quietMove",
+      "attackingF2F7", "mateIn2"
+    ],
+    "excludeThemes": ["sacrifice"],
+    "ratingMin": 1000,
+    "ratingMax": 1800,
+    "target": 1000
+  }
+}

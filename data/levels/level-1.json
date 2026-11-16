@@ -1,0 +1,20 @@
+{
+  "level": 1,
+  "restrictions": ["no-premoves", "no-tactics", "no-gambits", "no-sacrifices"],
+  "habits": [
+    ["know-piece-moves"],
+    ["center-control"],
+    ["castle-asap"],
+    ["always-trade"],
+    ["no-hanging-pieces", "take-free-pieces"],
+    ["endgame-king-activity", "attack-pawns"]
+  ],
+  "extraKnowledge": [],
+  "tactics": {
+    "themes": ["hangingPiece", "mateIn1"],
+    "excludeThemes": ["sacrifice"],
+    "ratingMin": 400,
+    "ratingMax": 1100,
+    "target": 1000
+  }
+}
