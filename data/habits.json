@@ -1,5 +1,5 @@
 {
-  "$comment": "Habit catalog (SPEC §3.1). One entry per stable habit ID. `kinds`: check = detectable in a game, drill = trainable with puzzles, info = guidance only. `source` says how it is detected or drilled; `phase` is when the check/drill is planned. Per-level selection lives in data/levels/level-N.json.",
+  "$comment": "Habit catalog (SPEC §3.1). One entry per stable habit ID. `kinds`: check = detectable in a game, drill = trainable with puzzles, info = guidance only. `source` says how it is detected or drilled; `phase` is when the check/drill is planned. Per-level selection lives in data/levels/level-N.json. `video` links the clearest explanation in the Building Habits v2 series (episode, timestamp); summaries are our own words.",
   "habits": {
     "no-premoves": {
       "label": "no premoves",
@@ -7,7 +7,8 @@
       "source": "Move time from %clk deltas: about 0.1s means a premove.",
       "difficulty": "easy",
       "phase": 3,
-      "guidance": "Think on every move. A premove skips the one look that catches a hanging piece."
+      "guidance": "Think on every move. A premove skips the one look that catches a hanging piece.",
+      "video": { "url": "https://youtu.be/COuBww22MUA?t=3272", "episode": "full stream 1", "at": "54:32" }
     },
     "premoves-under-10s": {
       "label": "premoves only under 10s",
@@ -15,7 +16,8 @@
       "source": "Move time from %clk deltas; allowed only when the clock is under 10 seconds.",
       "difficulty": "easy",
       "phase": 3,
-      "guidance": "Premove only when your clock is almost out. Otherwise, look at the board first."
+      "guidance": "Premove only when your clock is almost out. Otherwise, look at the board first.",
+      "video": { "url": "https://youtu.be/nVimLD6wMUw?t=2764", "episode": "ep 4", "at": "46:04" }
     },
     "no-tactics": {
       "label": "no tactics",
@@ -23,7 +25,8 @@
       "source": "Guidance only.",
       "difficulty": null,
       "phase": null,
-      "guidance": "Don't hunt for combinations yet. Develop, keep your pieces safe and take what is free."
+      "guidance": "Don't hunt for combinations yet. Develop, keep your pieces safe and take what is free.",
+      "video": { "url": "https://youtu.be/COuBww22MUA?t=3272", "episode": "full stream 1", "at": "54:32" }
     },
     "no-gambits": {
       "label": "no gambits",
@@ -31,7 +34,8 @@
       "source": "no-sacrifices restricted to pawns in roughly the first 12 moves.",
       "difficulty": "medium",
       "phase": 4,
-      "guidance": "Don't give away pawns in the opening for a vague attack. Keep material level and develop."
+      "guidance": "Don't give away pawns in the opening for a vague attack. Keep material level and develop.",
+      "video": { "url": "https://youtu.be/COuBww22MUA?t=3272", "episode": "full stream 1", "at": "54:32" }
     },
     "no-sacrifices": {
       "label": "no sacrifices",
@@ -39,7 +43,8 @@
       "source": "Material given up and not won back within 2 plies (not a forced recapture). Stockfish separates sound sacrifices from blunders.",
       "difficulty": "medium",
       "phase": 4,
-      "guidance": "Don't give up material unless you can see it come back. Solid beats speculative."
+      "guidance": "Don't give up material unless you can see it come back. Solid beats speculative.",
+      "video": { "url": "https://youtu.be/COuBww22MUA?t=3272", "episode": "full stream 1", "at": "54:32" }
     },
     "never-resign": {
       "label": "never resign",
@@ -47,7 +52,8 @@
       "source": "PGN termination: the user lost by resignation.",
       "difficulty": "trivial",
       "phase": 3,
-      "guidance": "Play it out. Opponents at every level miss wins, stalemate and flag."
+      "guidance": "Play it out. Opponents at every level miss wins, stalemate and flag. Learn the basic mates so you can finish games yourself.",
+      "video": { "url": "https://youtu.be/yNPv5lrbHDk?t=11523", "episode": "full stream 6", "at": "3:12:03" }
     },
     "know-piece-moves": {
       "label": "know how the pieces move",
@@ -55,7 +61,8 @@
       "source": "Guidance only.",
       "difficulty": null,
       "phase": null,
-      "guidance": "Be fluent with every piece, including castling, en passant and promotion."
+      "guidance": "Be fluent with every piece, including castling, en passant and promotion.",
+      "video": { "url": "https://youtu.be/aSyCrQVVGU4?t=8958", "episode": "full stream 5", "at": "2:29:18" }
     },
     "center-control": {
       "label": "center control",
@@ -63,7 +70,8 @@
       "source": "Score central squares occupied or attacked through the opening (soft).",
       "difficulty": "fuzzy",
       "phase": 3,
-      "guidance": "Put pawns and pieces where they touch d4, e4, d5 and e5."
+      "guidance": "Put pawns and pieces where they touch d4, e4, d5 and e5. If a piece can't go to the center, put it where it controls the center.",
+      "video": { "url": "https://youtu.be/COuBww22MUA?t=113", "episode": "full stream 1", "at": "1:53" }
     },
     "castle-asap": {
       "label": "castle asap",
@@ -71,7 +79,8 @@
       "source": "Plies where castling was legal and not played; the move number when the user castled (or never).",
       "difficulty": "easy",
       "phase": 3,
-      "guidance": "Castle as soon as it is legal. A safe king makes everything else easier."
+      "guidance": "Castle as soon as it is legal. A safe king makes everything else easier.",
+      "video": { "url": "https://youtu.be/aSyCrQVVGU4?t=6766", "episode": "full stream 5", "at": "1:52:46" }
     },
     "castle-quickly": {
       "label": "castle quickly",
@@ -79,7 +88,8 @@
       "source": "Plies where castling was legal and not played; the move number when the user castled (or never).",
       "difficulty": "easy",
       "phase": 3,
-      "guidance": "Get the king safe early, usually within the first ten moves."
+      "guidance": "Get the king safe early, usually within the first ten moves.",
+      "video": { "url": "https://youtu.be/nVimLD6wMUw?t=879", "episode": "ep 4", "at": "14:39" }
     },
     "develop-aggressively": {
       "label": "develop aggressively",
@@ -87,7 +97,8 @@
       "source": "Minor pieces still on their starting squares after move N; the same piece moved twice before all minors are out.",
       "difficulty": "easy",
       "phase": 3,
-      "guidance": "Bring every minor piece out before moving any piece twice."
+      "guidance": "Bring every minor piece out before moving any piece twice.",
+      "video": { "url": "https://youtu.be/nVimLD6wMUw?t=847", "episode": "ep 4", "at": "14:07" }
     },
     "always-trade": {
       "label": "always trade",
@@ -95,7 +106,8 @@
       "source": "An equal trade was available and declined (low weight; informational).",
       "difficulty": "medium",
       "phase": 3,
-      "guidance": "When an even trade is on offer, take it. Fewer pieces means fewer things to blunder."
+      "guidance": "When an even trade is on offer, take it. Fewer pieces means fewer things to blunder.",
+      "video": { "url": "https://youtu.be/yNPv5lrbHDk?t=7600", "episode": "full stream 6", "at": "2:06:40" }
     },
     "no-hanging-pieces": {
       "label": "no hanging pieces",
@@ -103,7 +115,8 @@
       "source": "After the user's move, any user piece that loses material by static exchange evaluation. Confirmed with Stockfish.",
       "difficulty": "medium",
       "phase": 4,
-      "guidance": "Before every move, check that each of your pieces is defended or safe."
+      "guidance": "Before every move, check that each of your pieces is defended or safe.",
+      "video": { "url": "https://youtu.be/txtjq9AhNbE?t=7395", "episode": "full stream 3", "at": "2:03:15" }
     },
     "take-free-pieces": {
       "label": "take free pieces",
@@ -111,7 +124,8 @@
       "source": "The opponent left material capturable with a positive static exchange and the user didn't take it. Confirmed with Stockfish.",
       "difficulty": "medium",
       "phase": 4,
-      "guidance": "Before every move, check whether anything of theirs can be taken for free."
+      "guidance": "Before every move, check whether anything of theirs can be taken for free.",
+      "video": { "url": "https://youtu.be/WyfYv36M8Qc?t=7655", "episode": "full stream 4", "at": "2:07:35" }
     },
     "rpm": {
       "label": "rpms (random pawn moves)",
@@ -119,7 +133,62 @@
       "source": "Soft check, no detector yet: once the user's minor pieces are developed and the king has castled, count quiet queenside pawn moves vs aimless piece moves.",
       "difficulty": "medium",
       "phase": 3,
-      "guidance": "Once your pieces are developed, you've castled and there's nothing useful for them to do, push a queenside pawn instead of shuffling pieces around."
+      "guidance": "Once your pieces are developed, you've castled and there's nothing useful for them to do, push a queenside pawn instead of shuffling pieces around.",
+      "video": { "url": "https://youtu.be/COuBww22MUA?t=131", "episode": "full stream 1", "at": "2:11" }
+    },
+    "snorkel": {
+      "label": "snorkel (luft)",
+      "kinds": ["check"],
+      "source": "After castling, h3/h6 on the castled side (g3/g6 also counts) within 5 own moves; flag it when, 6 moves after castling, the king still sits behind three unmoved pawns. Series games: 89-97% of games at every level, median 1-2 moves after castling.",
+      "difficulty": "easy",
+      "phase": 3,
+      "guidance": "Once you've castled, push the pawn in front of your king one square (h3 or h6) so it can never be mated on the back rank.",
+      "video": { "url": "https://youtu.be/COuBww22MUA?t=49", "episode": "full stream 1", "at": "0:49" }
+    },
+    "rooks-to-middle": {
+      "label": "rooks to the middle",
+      "kinds": ["check"],
+      "source": "First rook move after castling goes to the d- or e-file, within 9 own moves of castling; best with check while the enemy king is still in the middle. Series games: 90-96% at every level.",
+      "difficulty": "easy",
+      "phase": 3,
+      "guidance": "After castling, bring a rook to the d- or e-file. If the enemy king is still in the middle, do it right away.",
+      "video": { "url": "https://youtu.be/nVimLD6wMUw?t=1848", "episode": "ep 4", "at": "30:48" }
+    },
+    "double-rooks-open-file": {
+      "label": "double rooks on open files",
+      "kinds": ["check"],
+      "source": "In the middlegame, both rooks on the same open or half-open file (soft).",
+      "difficulty": "medium",
+      "phase": 3,
+      "guidance": "When a file opens up, stack both rooks on it to take it over.",
+      "video": { "url": "https://youtu.be/M_v0of2gduY?t=731", "episode": "ep 8", "at": "12:11" }
+    },
+    "queen-up": {
+      "label": "queen up",
+      "kinds": ["info"],
+      "source": "Guidance only.",
+      "difficulty": null,
+      "phase": null,
+      "guidance": "With the rook centralized, step the queen up one square to connect the rooks and make room for the second one.",
+      "video": { "url": "https://youtu.be/nVimLD6wMUw?t=879", "episode": "ep 4", "at": "14:39" }
+    },
+    "queen-trade-after-sac": {
+      "label": "trade queens after a sacrifice",
+      "kinds": ["info"],
+      "source": "Guidance only.",
+      "difficulty": null,
+      "phase": null,
+      "guidance": "If your opponent gives up a piece to attack, offer a queen trade straight away. Their attack stops and you keep the extra piece.",
+      "video": { "url": "https://youtu.be/nVimLD6wMUw?t=979", "episode": "ep 4", "at": "16:19" }
+    },
+    "no-early-queen": {
+      "label": "no early queen",
+      "kinds": ["info"],
+      "source": "Guidance only.",
+      "difficulty": null,
+      "phase": null,
+      "guidance": "Develop knights and bishops before the queen; an early queen just gets chased around.",
+      "video": { "url": "https://youtu.be/FFVG_LqACiU?t=2440", "episode": "ep 7", "at": "40:40" }
     },
     "endgame-king-activity": {
       "label": "active king in the endgame",
@@ -127,7 +196,8 @@
       "source": "In the endgame (non-pawn material under a threshold): the king's distance from the center over time, and king moves.",
       "difficulty": "medium",
       "phase": 3,
-      "guidance": "Once the queens are off, march the king to the middle. It is a fighting piece."
+      "guidance": "Once the queens are off, march the king to the middle. It is a fighting piece.",
+      "video": { "url": "https://youtu.be/WyfYv36M8Qc?t=1386", "episode": "full stream 4", "at": "23:06" }
     },
     "attack-pawns": {
       "label": "attack pawns",
@@ -135,7 +205,8 @@
       "source": "In the endgame, moves that attack or win enemy pawns (soft).",
       "difficulty": "hard",
       "phase": 4,
-      "guidance": "In the endgame, go after their pawns: every one you win is a potential queen."
+      "guidance": "In the endgame, go after their pawns: every one you win is a potential queen.",
+      "video": { "url": "https://youtu.be/aSyCrQVVGU4?t=7362", "episode": "full stream 5", "at": "2:02:42" }
     },
     "basic-tactics": {
       "label": "basic tactics",
@@ -143,7 +214,8 @@
       "source": "Lichess puzzles filtered by theme and repertoire opening (pin, fork, skewer, discovery).",
       "difficulty": null,
       "phase": 1,
-      "guidance": "Learn the four basic patterns: pin, fork, skewer and discovered attack."
+      "guidance": "Learn the four basic patterns: pin, fork, skewer and discovered attack.",
+      "video": { "url": "https://youtu.be/nVimLD6wMUw?t=31", "episode": "ep 4", "at": "0:31" }
     },
     "basic-and-advanced-tactics": {
       "label": "basic and advanced tactics",
@@ -151,7 +223,8 @@
       "source": "Lichess puzzles filtered by theme and repertoire opening.",
       "difficulty": null,
       "phase": 1,
-      "guidance": "Add deflection, attraction, clearance, interference and in-between moves to the basics."
+      "guidance": "Add deflection, attraction, clearance, interference and in-between moves to the basics.",
+      "video": { "url": "https://youtu.be/M_v0of2gduY?t=31", "episode": "ep 8", "at": "0:31" }
     },
     "basic-openings-and-responses": {
       "label": "openings and responses",
@@ -159,7 +232,8 @@
       "source": "Repertoire trainer; game review reports where the user left the repertoire.",
       "difficulty": "medium",
       "phase": 1,
-      "guidance": "Know a set answer to each common reply, one opening per color."
+      "guidance": "Know a set answer to each common reply, one opening per color.",
+      "video": { "url": "https://youtu.be/M_v0of2gduY?t=31", "episode": "ep 8", "at": "0:31" }
     },
     "active-not-reactive": {
       "label": "be active, not reactive",
@@ -167,7 +241,8 @@
       "source": "Guidance only.",
       "difficulty": null,
       "phase": null,
-      "guidance": "Make your own threats instead of only answering theirs."
+      "guidance": "Make your own threats instead of only answering theirs.",
+      "video": { "url": "https://youtu.be/M_v0of2gduY?t=621", "episode": "ep 8", "at": "10:21" }
     },
     "opposition-pawn-rook-endgames": {
       "label": "opposition, pawn and rook endgames",
@@ -183,7 +258,8 @@
       "source": "Hand-curated endgame positions played against Stockfish (§5.4).",
       "difficulty": null,
       "phase": 4,
-      "guidance": "Win the Lucena, hold the Philidor, and know when a knight beats a bishop."
+      "guidance": "Win the Lucena, hold the Philidor, and know when a knight beats a bishop.",
+      "video": { "url": "https://youtu.be/_97o44T1V0A?t=988", "episode": "ep 13", "at": "16:28" }
     },
     "trade-when-up-not-when-down": {
       "label": "trade when up, not when down",
@@ -191,7 +267,8 @@
       "source": "Trades started vs material balance.",
       "difficulty": "medium",
       "phase": 3,
-      "guidance": "Ahead in material, simplify. Behind, keep pieces on and look for chances."
+      "guidance": "Ahead in material, simplify. Behind, keep pieces on and look for chances.",
+      "video": { "url": "https://youtu.be/_97o44T1V0A?t=31", "episode": "ep 13", "at": "0:31" }
     },
     "rook-placement": {
       "label": "rook placement",
@@ -207,7 +284,8 @@
       "source": "Lichess puzzles filtered by checkmate-pattern themes and repertoire opening.",
       "difficulty": null,
       "phase": 1,
-      "guidance": "Recognize the named mates: back rank, smothered, Anastasia, Arabian, Boden and more."
+      "guidance": "Recognize the named mates: back rank, smothered, Anastasia, Arabian, Boden and more.",
+      "video": { "url": "https://youtu.be/_97o44T1V0A?t=31", "episode": "ep 13", "at": "0:31" }
     },
     "pawn-structure-weak-pawns": {
       "label": "pawn structure, weak pawns",
@@ -215,7 +293,8 @@
       "source": "Guidance only.",
       "difficulty": null,
       "phase": null,
-      "guidance": "Spot isolated, doubled and backward pawns, yours and theirs, and play against the weak ones."
+      "guidance": "Spot isolated, doubled and backward pawns, yours and theirs, and play against the weak ones.",
+      "video": { "url": "https://youtu.be/j2bIudetGM8?t=1762", "episode": "ep 15", "at": "29:22" }
     }
   }
 }

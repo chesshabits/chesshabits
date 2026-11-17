@@ -104,6 +104,7 @@ export function AboutPage({ desktop, left }: { desktop: boolean; left: ReactNode
       <div className="center top">
         <AboutContent />
       </div>
+      {left}
       <Notices />
     </>
   );

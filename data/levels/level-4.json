@@ -1,11 +1,14 @@
 {
   "level": 4,
-  "$todo": "rpm: confirm whether the series still uses RPMs at this level, then add [\"rpm\"] to habits.",
+  "$comment": "No rpm here: the series stops stressing random pawn moves at Level 4 (see SPEC §3).",
   "restrictions": [],
   "habits": [
     ["basic-and-advanced-tactics"],
     ["basic-openings-and-responses"],
     ["all-checkmate-patterns"],
+    ["snorkel"],
+    ["double-rooks-open-file"],
+    ["queen-trade-after-sac"],
     ["no-hanging-pieces", "take-free-pieces"],
     ["pawn-structure-weak-pawns"]
   ],

@@ -1,13 +1,16 @@
 {
   "level": 1,
-  "restrictions": ["no-premoves", "no-tactics", "no-gambits", "no-sacrifices"],
+  "restrictions": ["never-resign", "no-premoves", "no-tactics", "no-gambits", "no-sacrifices"],
   "habits": [
     ["know-piece-moves"],
     ["center-control"],
     ["castle-asap"],
+    ["snorkel"],
+    ["rooks-to-middle", "queen-up"],
     ["always-trade"],
     ["no-hanging-pieces", "take-free-pieces"],
     ["rpm"],
+    ["no-early-queen"],
     ["endgame-king-activity", "attack-pawns"]
   ],
   "extraKnowledge": [],

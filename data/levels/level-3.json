@@ -1,11 +1,14 @@
 {
   "level": 3,
-  "$todo": "rpm: confirm whether the series still uses RPMs at this level, then add [\"rpm\"] to habits.",
   "restrictions": ["never-resign", "no-gambits", "no-sacrifices"],
   "habits": [
     ["basic-and-advanced-tactics"],
     ["basic-openings-and-responses"],
     ["active-not-reactive"],
+    ["snorkel"],
+    ["double-rooks-open-file"],
+    ["rpm"],
+    ["queen-trade-after-sac"],
     ["no-hanging-pieces", "take-free-pieces"],
     ["endgame-king-activity", "attack-pawns"]
   ],

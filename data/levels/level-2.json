@@ -5,8 +5,12 @@
     ["basic-tactics"],
     ["center-control"],
     ["castle-quickly", "develop-aggressively"],
+    ["snorkel"],
+    ["rooks-to-middle", "queen-up"],
     ["no-hanging-pieces", "take-free-pieces"],
     ["rpm"],
+    ["no-early-queen"],
+    ["queen-trade-after-sac"],
     ["endgame-king-activity", "attack-pawns"]
   ],
   "extraKnowledge": [],

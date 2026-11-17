@@ -177,6 +177,23 @@ export function RepertoireNav({
   );
 }
 
+/** "▶ ep 4 · 14:39": where the series explains a habit, opening in a new tab. */
+function VideoLink({ id }: { id: string }) {
+  const v = habit(id).video;
+  if (!v) return null;
+  return (
+    <a
+      className="video-link"
+      href={v.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`Watch ${habit(id).label} in the series, ${v.episode} at ${v.at}`}
+    >
+      ▶ {v.episode} · {v.at}
+    </a>
+  );
+}
+
 /** The level's habits, restrictions and extra knowledge (data/levels/level-N.json). */
 export function HabitsPanel({ level }: { level: LevelId }) {
   const config = levelConfig(level);
@@ -189,7 +206,10 @@ export function HabitsPanel({ level }: { level: LevelId }) {
           <details key={ids.join('+')} className="habit">
             <summary>{ids.map((id) => habit(id).label).join(' + ')}</summary>
             {ids.map((id) => (
-              <p key={id}>{habit(id).guidance}</p>
+              <p key={id}>
+                {ids.length > 1 && <span className="dim">{habit(id).label}: </span>}
+                {habit(id).guidance} <VideoLink id={id} />
+              </p>
             ))}
           </details>
         ))}
@@ -210,7 +230,9 @@ export function HabitsPanel({ level }: { level: LevelId }) {
           {config.extraKnowledge.map((id) => (
             <details key={id} className="habit">
               <summary>{habit(id).label}</summary>
-              <p>{habit(id).guidance}</p>
+              <p>
+                {habit(id).guidance} <VideoLink id={id} />
+              </p>
             </details>
           ))}
         </Section>

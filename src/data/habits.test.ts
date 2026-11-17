@@ -34,4 +34,41 @@ describe('habit config', () => {
       expect(c.tactics.excludeThemes.includes('sacrifice')).toBe(c.restrictions.includes('no-sacrifices'));
     }
   });
+
+  it('places every habit in the catalog at some level', () => {
+    const used = new Set(LEVELS.flatMap(({ id }) => habitIds(levelConfig(id))));
+    for (const id of Object.keys(HABITS)) expect(used.has(id), id).toBe(true);
+  });
+
+  it('links each habit video to a timestamp that matches its label', () => {
+    for (const [id, h] of Object.entries(HABITS)) {
+      if (!h.video) continue;
+      const m = h.video.url.match(/^https:\/\/youtu\.be\/[\w-]{11}\?t=(\d+)$/);
+      expect(m, id).not.toBeNull();
+      const parts = h.video.at.split(':').map(Number);
+      const seconds = parts.reduce((acc, n) => acc * 60 + n, 0);
+      expect(seconds, id).toBe(Number(m![1]));
+      expect(h.video.episode, id).toMatch(/^(ep \d+|full stream \d+)$/);
+    }
+  });
+
+  it('has a video for every graded habit (check or drill), apart from known gaps', () => {
+    const noTimestampYet = new Set(['opposition-pawn-rook-endgames']);
+    for (const { id } of LEVELS) {
+      for (const habitId of habitIds(levelConfig(id))) {
+        const h = HABITS[habitId];
+        if (h.kinds.includes('info') || noTimestampYet.has(habitId)) continue;
+        expect(h.video, `${habitId} (level ${id})`).toBeDefined();
+      }
+    }
+  });
+
+  it('teaches never-resign from Level 1 and the snorkel at every level', () => {
+    for (const { id } of LEVELS) {
+      expect(habitIds(levelConfig(id)), `level ${id}`).toContain('never-resign');
+      expect(levelConfig(id).habits.flat(), `level ${id}`).toContain('snorkel');
+    }
+    expect(levelConfig(3).habits.flat()).toContain('rpm');
+    expect(levelConfig(4).habits.flat()).not.toContain('rpm');
+  });
 });

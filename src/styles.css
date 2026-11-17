@@ -421,6 +421,19 @@ button.row:hover {
   color: var(--dim);
 }
 
+.video-link {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--dim);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.video-link:hover,
+.video-link:focus-visible {
+  color: var(--accent);
+}
+
 .habit .tags {
   display: block;
   padding: 0 20px 14px;

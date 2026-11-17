@@ -7,13 +7,26 @@ import type { LevelId } from './levels';
 
 export type HabitKind = 'check' | 'drill' | 'info';
 
+/** Where the series explains a habit best (Building Habits v2). */
+export interface HabitVideo {
+  /** youtu.be link with the timestamp, e.g. https://youtu.be/<id>?t=879 */
+  url: string;
+  /** "ep 4" (main episode) or "full stream 6" (full VOD) */
+  episode: string;
+  /** "14:39" or "3:12:03" */
+  at: string;
+}
+
 export interface Habit {
   label: string;
   kinds: HabitKind[];
+  /** How a future check (Phase 3) would detect it, or how it is drilled. */
   source: string;
   difficulty: string | null;
   phase: number | null;
+  /** Our own one-line summary. */
   guidance: string;
+  video?: HabitVideo;
 }
 
 export interface TacticsConfig {
