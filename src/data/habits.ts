@@ -25,6 +25,8 @@ export interface TacticsConfig {
   ratingMax: number;
   /** Number of puzzles to ship for this level. */
   target: number;
+  /** Higher-level themes allowed to ride along (they don't disqualify a puzzle). */
+  allowThemes?: string[];
   /** Share of the set reserved for a theme, e.g. { hangingPiece: 0.5 }. */
   weights?: Record<string, number>;
 }

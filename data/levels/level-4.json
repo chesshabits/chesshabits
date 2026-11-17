@@ -21,7 +21,7 @@
   },
   "tactics": {
     "themes": [
-      "hangingPiece", "mateIn1", "fork", "pin", "skewer", "discoveredAttack",
+      "hangingPiece", "savePiece", "mateIn1", "fork", "pin", "skewer", "discoveredAttack",
       "deflection", "attraction", "clearance", "interference", "intermezzo", "xRayAttack",
       "trappedPiece", "capturingDefender", "doubleCheck", "discoveredCheck", "quietMove",
       "attackingF2F7", "mateIn2",

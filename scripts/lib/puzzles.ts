@@ -43,6 +43,8 @@ export interface TacticsFilter {
   weights?: Record<string, number>;
   /** Tactic themes taught at higher levels only; puzzles carrying one are left out. Filled in by the build script. */
   beyondThemes?: string[];
+  /** Higher-level themes that may ride along without disqualifying a puzzle (e.g. a free piece taken with mate). */
+  allowThemes?: string[];
   /** Leave out puzzles whose first move gives up material (levels with the no-sacrifices restriction). */
   noSacrificeFirst?: boolean;
 }
@@ -120,6 +122,49 @@ export function sacrificeFirst(p: Pick<RawPuzzle, 'fen' | 'moves'>): boolean {
   } catch {
     return false;
   }
+}
+
+type Board = InstanceType<typeof Chess>;
+type Sq = Parameters<Board['get']>[0];
+
+/** A non-pawn, non-king piece of `me` that is attacked and undefended, or attacked by something cheaper. */
+function isHanging(board: Board, square: string, me: 'w' | 'b'): boolean {
+  const piece = board.get(square as Sq);
+  if (!piece || piece.color !== me || piece.type === 'k' || piece.type === 'p') return false;
+  const attackers = board.attackers(square as Sq, me === 'w' ? 'b' : 'w');
+  if (attackers.length === 0) return false;
+  const cheapest = Math.min(...attackers.map((s) => VALUE[board.get(s)!.type]));
+  return board.attackers(square as Sq, me).length === 0 || cheapest < VALUE[piece.type];
+}
+
+/** Our own theme for the no-hanging-pieces habit (Lichess has none): see savesHangingPiece. */
+export const SAVE_PIECE_THEME = 'savePiece';
+
+/**
+ * A "don't hang your piece" puzzle: the opponent's setup move leaves one of the solver's pieces
+ * hanging (it wasn't before), and the first solution move takes that piece to safety without
+ * capturing anything.
+ */
+export function savesHangingPiece(p: Pick<RawPuzzle, 'fen' | 'moves'>): boolean {
+  const moves = p.moves.split(' ');
+  if (moves.length < 2) return false;
+  try {
+    const board = new Chess(p.fen);
+    const me = board.turn() === 'w' ? 'b' : 'w';
+    const from = moves[1].slice(0, 2);
+    if (isHanging(board, from, me)) return false;
+    board.move({ from: moves[0].slice(0, 2), to: moves[0].slice(2, 4), promotion: moves[0][4] });
+    if (!isHanging(board, from, me)) return false;
+    const saved = board.move({ from, to: moves[1].slice(2, 4), promotion: moves[1][4] });
+    return !saved.captured && !isHanging(board, saved.to, me);
+  } catch {
+    return false;
+  }
+}
+
+/** Add our computed themes to a puzzle's Lichess themes. */
+export function withComputedThemes<T extends Pick<RawPuzzle, 'fen' | 'moves' | 'themes'>>(p: T): T {
+  return savesHangingPiece(p) ? { ...p, themes: [...p.themes, SAVE_PIECE_THEME] } : p;
 }
 
 /**

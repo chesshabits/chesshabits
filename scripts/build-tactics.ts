@@ -10,6 +10,8 @@
  *  - train one of the level's themes, within its rating range (data/levels/level-N.json);
  *  - carry no theme taught only at a higher level, and no excluded theme;
  *  - at levels with the no-sacrifices restriction, don't start by giving up material.
+ * Puzzles where the first move rescues a piece the opponent just attacked get our own
+ * "savePiece" theme (no-hanging-pieces habit), alongside Lichess's themes.
  * Weighted themes (e.g. hanging pieces) get their share first. Writes data/tactics/level-N.json.
  */
 import { spawn, spawnSync } from 'node:child_process';
@@ -24,6 +26,7 @@ import {
   DEFAULT_QUALITY,
   LevelSelector,
   matchesRepertoire,
+  withComputedThemes,
   parsePuzzleRow,
   passesQuality,
   type TacticsFilter,
@@ -81,7 +84,7 @@ async function main() {
     const c = configs[i];
     const filter: TacticsFilter = {
       ...c.tactics,
-      beyondThemes: [...allThemes].filter((t) => !c.tactics.themes.includes(t)),
+      beyondThemes: [...allThemes].filter((t) => !c.tactics.themes.includes(t) && !c.tactics.allowThemes?.includes(t)),
       noSacrificeFirst: c.restrictions.includes('no-sacrifices'),
     };
     return {
@@ -104,10 +107,12 @@ async function main() {
     if (p.openingTags.length) seenTags.add(p.openingTags[1] ?? `${p.openingTags[0]}_Other_variations`);
     if (!passesQuality(p, DEFAULT_QUALITY)) continue;
     let matched = false;
+    let computed: typeof p | undefined;
     for (const l of levels) {
       if (!matchesRepertoire(p, l.tags)) continue;
       matched = true;
-      l.selector.offer(p);
+      computed ??= withComputedThemes(p);
+      l.selector.offer(computed);
     }
     if (matched) inOpenings++;
   }

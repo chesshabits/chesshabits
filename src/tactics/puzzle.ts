@@ -86,6 +86,9 @@ export function pickPuzzle<T extends Puzzle>(
 }
 
 const THEME_NAMES: Record<string, string> = {
+  // Named after the habits they drill (SPEC §3): free pieces, taken or saved.
+  hangingPiece: 'take free pieces',
+  savePiece: 'save hanging pieces',
   mateIn1: 'mate in 1',
   mateIn2: 'mate in 2',
   mateIn3: 'mate in 3',

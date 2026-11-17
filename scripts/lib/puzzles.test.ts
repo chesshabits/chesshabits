@@ -4,6 +4,8 @@ import {
   levelThemes,
   matchesRepertoire,
   sacrificeFirst,
+  savesHangingPiece,
+  withComputedThemes,
   solverColor,
   parsePuzzleRow,
   passesQuality,
@@ -109,6 +111,26 @@ describe('filters', () => {
     const p = puzzle({ ...sac, themes: ['fork'] });
     expect(levelThemes(p, f)).toEqual([]);
     expect(levelThemes(p, L2)).toEqual(['fork']);
+  });
+});
+
+describe('savesHangingPiece', () => {
+  // Black knight on c6 is attacked by the setup move d4-d5 (pawn attacks knight); ...Ne5 saves it.
+  const save = { fen: 'r1bqkbnr/pppppppp/2n5/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 1', moves: 'd4d5 c6e5' };
+
+  it('spots a first move that rescues a piece the setup move attacked', () => {
+    expect(savesHangingPiece(save)).toBe(true);
+    expect(withComputedThemes({ ...save, themes: ['short'] }).themes).toEqual(['short', 'savePiece']);
+  });
+
+  it('ignores other first moves', () => {
+    // Leaving the knight hanging.
+    expect(savesHangingPiece({ ...save, moves: 'd4d5 a7a6' })).toBe(false);
+    // Saving it by moving into another attack (b4 is covered by nothing, but d4 is hit by the queen).
+    expect(savesHangingPiece({ ...save, moves: 'd4d5 c6d4' })).toBe(false);
+    // A setup move that attacks nothing.
+    expect(savesHangingPiece({ ...save, moves: 'a2a3 c6e5' })).toBe(false);
+    expect(withComputedThemes({ ...save, moves: 'd4d5 a7a6', themes: ['short'] }).themes).toEqual(['short']);
   });
 });
 

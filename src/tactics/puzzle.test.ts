@@ -79,7 +79,8 @@ describe('pickPuzzle', () => {
 
 describe('themeLabel', () => {
   it('makes theme IDs readable', () => {
-    expect(themeLabel('hangingPiece')).toBe('hanging piece');
+    expect(themeLabel('hangingPiece')).toBe('take free pieces');
+    expect(themeLabel('savePiece')).toBe('save hanging pieces');
     expect(themeLabel('mateIn1')).toBe('mate in 1');
     expect(themeLabel('discoveredAttack')).toBe('discovered attack');
   });

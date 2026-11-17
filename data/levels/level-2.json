@@ -14,7 +14,7 @@
     "spacedRepetition": false
   },
   "tactics": {
-    "themes": ["hangingPiece", "mateIn1", "fork", "pin", "skewer", "discoveredAttack"],
+    "themes": ["hangingPiece", "savePiece", "mateIn1", "fork", "pin", "skewer", "discoveredAttack"],
     "weights": { "hangingPiece": 0.5 },
     "excludeThemes": ["sacrifice"],
     "ratingMin": 700,
