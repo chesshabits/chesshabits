@@ -16,9 +16,8 @@
     "spacedRepetition": false
   },
   "tactics": {
-    "$comment": "Free pieces: take a free piece (hangingPiece) or save your own hanging piece (savePiece, computed by scripts/lib/puzzles.ts). Add \"mateIn1\" to themes to bring mate-in-one back; allowThemes keeps free pieces that happen to mate.",
-    "themes": ["hangingPiece", "savePiece"],
-    "allowThemes": ["mateIn1"],
+    "$comment": "Free pieces: take a free piece (hangingPiece), save your own hanging piece (savePiece, computed by scripts/lib/puzzles.ts), or mate in one.",
+    "themes": ["hangingPiece", "savePiece", "mateIn1"],
     "excludeThemes": ["sacrifice"],
     "ratingMin": 400,
     "ratingMax": 1200,
