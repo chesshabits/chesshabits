@@ -1,9 +1,8 @@
 import { useCallback, useId, useState, type ReactNode } from 'react';
-import { habit, levelConfig, showsOpeningNames } from '../data/habits';
+import { habit, levelConfig } from '../data/habits';
 import type { LevelId } from '../data/levels';
 import { routeHref, type OpeningsMode, type Page } from '../hooks';
 import { loadSections, saveSections } from '../storage';
-import { moveLabel } from '../trainer/explain';
 
 /** Plain (non-collapsible) section label, e.g. inside the level picker. */
 export function Sec({ children, accent }: { children: ReactNode; accent?: boolean }) {
@@ -148,35 +147,32 @@ export function PracticePanel({ stats }: { stats: PracticeNumbers }) {
   );
 }
 
-export interface DrillCounts {
+export interface DeckCounts {
   white: number;
   black: number;
-  tactics: number | null;
 }
 
-export function DrillNav({
+/** The repertoire trainer's views: white, black, browse lines (under the "play" or "openings" tab). */
+export function RepertoireNav({
   page,
   mode,
   counts,
-  level,
 }: {
   page: Page;
   mode: OpeningsMode;
-  counts: DrillCounts;
-  level: LevelId;
+  counts: DeckCounts;
 }) {
-  const item = (href: string, label: string, count: ReactNode, active: boolean) => (
-    <a href={href} className="row" aria-current={active ? 'page' : undefined}>
+  const item = (m: OpeningsMode, label: string, count: ReactNode) => (
+    <a href={routeHref(page, m)} className="row" aria-current={mode === m ? 'page' : undefined}>
       <span>{label}</span>
       <span className="count">{count}</span>
     </a>
   );
   return (
-    <Section id="drill" title="drill" icon="target" summary={4}>
-      {item(routeHref('repertoire', 'white'), 'repertoire · white', counts.white, page === 'repertoire' && mode === 'white')}
-      {item(routeHref('repertoire', 'black'), 'repertoire · black', counts.black, page === 'repertoire' && mode === 'black')}
-      {item(routeHref('tactics'), showsOpeningNames(level) ? 'opening tactics' : 'tactics', counts.tactics ?? '…', page === 'tactics')}
-      {item(routeHref('repertoire', 'browse'), 'browse lines', '→', page === 'repertoire' && mode === 'browse')}
+    <Section id="repertoire" title="repertoire" icon="target" summary={counts.white + counts.black}>
+      {item('white', 'as white', counts.white)}
+      {item('black', 'as black', counts.black)}
+      {item('browse', 'browse lines', '→')}
     </Section>
   );
 }
@@ -220,84 +216,6 @@ export function HabitsPanel({ level }: { level: LevelId }) {
         </Section>
       )}
     </>
-  );
-}
-
-/**
- * Two-column move list. `viewPly` is the ply shown on the board (null = latest);
- * clicking a move shows the position after it.
- */
-export function MoveList({
-  line,
-  viewPly,
-  onView,
-  pending,
-  highlightLast,
-}: {
-  line: readonly string[];
-  viewPly: number | null;
-  onView?: (ply: number) => void;
-  /** Show an empty row for the move the user is about to play. */
-  pending?: boolean;
-  /** Color the latest move (the one the user is answering). */
-  highlightLast?: boolean;
-}) {
-  const rows: { num: number; white?: number; black?: number }[] = [];
-  for (let i = 0; i < line.length; i++) {
-    const num = Math.floor(i / 2) + 1;
-    if (i % 2 === 0) rows.push({ num, white: i });
-    else rows[rows.length - 1].black = i;
-  }
-  const nextPly = line.length;
-  const pendingRow = pending ? Math.floor(nextPly / 2) + 1 : null;
-  const showPendingRow = pending && nextPly % 2 === 0;
-  const shown = viewPly ?? line.length;
-
-  const cell = (ply: number | undefined) => {
-    if (ply === undefined) return <span />;
-    const san = line[ply];
-    const isLast = ply === line.length - 1;
-    return (
-      <button
-        type="button"
-        aria-current={viewPly !== null && shown === ply + 1 ? 'true' : undefined}
-        aria-label={`Show position after ${moveLabel(ply, san)}`}
-        className={highlightLast && isLast ? 'accent' : undefined}
-        onClick={() => onView?.(ply + 1)}
-      >
-        {san}
-      </button>
-    );
-  };
-
-  if (rows.length === 0 && !pending) {
-    return <div className="empty">No moves yet.</div>;
-  }
-
-  return (
-    <div>
-      {rows.map((r, i) => {
-        const isPendingHere = pending && !showPendingRow && i === rows.length - 1;
-        const isLastRow = i === rows.length - 1 && !showPendingRow;
-        return (
-          <div
-            key={r.num}
-            className={['moves-grid', isLastRow ? 'end' : '', isPendingHere ? 'current' : ''].join(' ').trim()}
-          >
-            <span className="dim">{r.num}.</span>
-            {cell(r.white)}
-            {isPendingHere ? <span className="dim">_</span> : cell(r.black)}
-          </div>
-        );
-      })}
-      {showPendingRow && (
-        <div className="moves-grid end current">
-          <span className="dim">{pendingRow}.</span>
-          <span className="dim">_</span>
-          <span />
-        </div>
-      )}
-    </div>
   );
 }
 

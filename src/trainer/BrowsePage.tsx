@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { Key } from 'chessground/types';
 import { Board } from '../components/Board';
-import { DrillNav, HabitsPanel, MoveList, Row, Section, Tabs, type DrillCounts } from '../components/Panels';
+import { MoveList } from '../components/MoveNav';
+import { HabitsPanel, RepertoireNav, Row, Section, Tabs, type DeckCounts } from '../components/Panels';
+import type { Page } from '../hooks';
 import { showsOpeningNames } from '../data/habits';
 import { getTree, type Color, type LevelId } from '../data/levels';
 import { openingName, shortOpeningName } from '../data/openings';
@@ -14,11 +16,13 @@ import { squaresOf } from './useTrainer';
 interface Props {
   level: LevelId;
   desktop: boolean;
-  counts: DrillCounts;
+  counts: DeckCounts;
+  /** The tab hosting the trainer: "play" (L1–L2) or "openings" (L3–L4). */
+  page: Page;
 }
 
 /** "Browse lines" (SPEC §5.1): walk the level's tree with game counts. */
-export function BrowsePage({ level, desktop, counts }: Props) {
+export function BrowsePage({ level, desktop, counts, page }: Props) {
   const [color, setColor] = useState<Color>('white');
   const [line, setLine] = useState<string[]>([]);
   const [flipped, setFlipped] = useState(false);
@@ -127,7 +131,7 @@ export function BrowsePage({ level, desktop, counts }: Props) {
 
   const lineList = (
     <Section id="line" title="line" icon="list" summary={`ply ${line.length}`}>
-      <MoveList line={line} viewPly={null} onView={(ply) => setLine((l) => l.slice(0, ply))} />
+      <MoveList line={line} view={null} onView={(ply) => setLine((l) => l.slice(0, ply))} />
       <div className="btn-bar">
         <button type="button" onClick={() => setLine((l) => l.slice(0, -1))} disabled={line.length === 0}>
           ← back
@@ -162,7 +166,7 @@ export function BrowsePage({ level, desktop, counts }: Props) {
             <Row label="series games" value={tree.games} />
             <Row label="positions to learn" value={positions} />
           </Section>
-          <DrillNav page="repertoire" mode="browse" counts={counts} level={level} />
+          <RepertoireNav page={page} mode="browse" counts={counts} />
           <HabitsPanel level={level} />
         </aside>
         <main className="center board-area">
@@ -203,7 +207,7 @@ export function BrowsePage({ level, desktop, counts }: Props) {
       {tab === 'line' && lineList}
       {tab === 'drill' && (
         <>
-          <DrillNav page="repertoire" mode="browse" counts={counts} level={level} />
+          <RepertoireNav page={page} mode="browse" counts={counts} />
           <HabitsPanel level={level} />
         </>
       )}

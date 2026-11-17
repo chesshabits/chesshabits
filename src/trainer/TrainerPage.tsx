@@ -2,7 +2,9 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { DrawShape } from 'chessground/draw';
 import type { Color as CgColor, Key } from 'chessground/types';
 import { Board } from '../components/Board';
-import { DrillNav, HabitsPanel, MoveList, PracticePanel, Row, Section, Tabs, TodayPanel, type DrillCounts } from '../components/Panels';
+import { MoveList, StepButtons, useLineView } from '../components/MoveNav';
+import { HabitsPanel, PracticePanel, RepertoireNav, Row, Section, Tabs, TodayPanel, type DeckCounts } from '../components/Panels';
+import type { Page } from '../hooks';
 import { showsOpeningNames } from '../data/habits';
 import type { Color, LevelId } from '../data/levels';
 import { openingName, shortOpeningName } from '../data/openings';
@@ -65,23 +67,25 @@ interface Props {
   level: LevelId;
   color: Color;
   desktop: boolean;
-  counts: DrillCounts;
+  counts: DeckCounts;
+  /** The tab hosting the trainer: "play" (L1–L2) or "openings" (L3–L4). */
+  page: Page;
 }
 
-export function TrainerPage({ level, color, desktop, counts }: Props) {
+export function TrainerPage({ level, color, desktop, counts, page }: Props) {
   const t = useTrainer(level, color);
   const { run } = t;
   const now = useNow();
   const [flipped, setFlipped] = useState(false);
-  const [viewPly, setViewPly] = useState<number | null>(null);
+  // A new move or a new line returns the board to the live position.
+  const lineView = useLineView(run.line.length, run.sync);
+  const viewPly = lineView.view;
   const [tab, setTab] = useState<'moves' | 'replies' | 'progress'>('moves');
 
-  // A new move or a new line returns the board to the live position.
-  useEffect(() => setViewPly(null), [run.line.length, run.sync]);
   useEffect(() => setFlipped(false), [color]);
 
   const orientation: CgColor = flipped ? other(color) : color;
-  const shownPly = viewPly ?? run.line.length;
+  const shownPly = lineView.shown;
   const view = useMemo(() => replay(run.line.slice(0, shownPly)), [run.line, shownPly]);
   const lastMove: [Key, Key] | undefined = view.last ? [view.last.from as Key, view.last.to as Key] : undefined;
   const live = viewPly === null;
@@ -100,19 +104,16 @@ export function TrainerPage({ level, color, desktop, counts }: Props) {
     return [];
   }, [live, run.phase, run.hint, run.line, run.feedback, t.expected]);
 
-  const step = (d: number) => {
-    const next = Math.max(0, Math.min(run.line.length, shownPly + d));
-    setViewPly(next === run.line.length ? null : next);
-  };
-
   useKeys({
     f: () => setFlipped((v) => !v),
     h: () => t.showHint(),
     s: () => t.skip(),
     n: run.phase === 'complete' ? () => t.startRun() : undefined,
     Enter: run.phase === 'complete' ? () => t.startRun() : undefined,
-    ArrowLeft: () => step(-1),
-    ArrowRight: () => step(1),
+    ArrowLeft: () => lineView.step(-1),
+    ArrowRight: () => lineView.step(1),
+    Home: lineView.first,
+    End: lineView.last,
   });
 
   // Prompt text.
@@ -192,11 +193,12 @@ export function TrainerPage({ level, color, desktop, counts }: Props) {
     <Section id="moves" title="moves" icon="list" summary={`ply ${run.line.length}`}>
       <MoveList
         line={run.line}
-        viewPly={viewPly}
-        onView={(ply) => setViewPly(ply === run.line.length ? null : ply)}
+        view={viewPly}
+        onView={lineView.setView}
         pending={run.phase === 'user' || run.phase === 'retry'}
         highlightLast={run.phase === 'user'}
       />
+      <StepButtons view={lineView} length={run.line.length} />
     </Section>
   );
 
@@ -225,7 +227,7 @@ export function TrainerPage({ level, color, desktop, counts }: Props) {
       <>
         <aside className="side left" aria-label="Progress and drills">
           {progressPanel}
-          <DrillNav page="repertoire" mode={color} counts={counts} level={level} />
+          <RepertoireNav page={page} mode={color} counts={counts} />
           <HabitsPanel level={level} />
         </aside>
         <main className="center board-area">
@@ -242,7 +244,7 @@ export function TrainerPage({ level, color, desktop, counts }: Props) {
             <span>
               {glyph(other(top))} {who(other(top))}
             </span>
-            <span>{live ? 'f flip · h hint · s skip · ← → step' : `viewing ply ${shownPly} · → to return`}</span>
+            <span>{live ? 'f flip · h hint · s skip · ← → step' : shownPly ? `viewing ${moveLabel(shownPly - 1, run.line[shownPly - 1])} · → to return` : 'viewing the start · → to return'}</span>
           </div>
         </main>
         <aside className="side right" aria-label="Your move">
@@ -285,7 +287,7 @@ export function TrainerPage({ level, color, desktop, counts }: Props) {
       {tab === 'progress' && (
         <>
           {progressPanel}
-          <DrillNav page="repertoire" mode={color} counts={counts} level={level} />
+          <RepertoireNav page={page} mode={color} counts={counts} />
           <HabitsPanel level={level} />
         </>
       )}

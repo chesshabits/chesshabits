@@ -2,9 +2,9 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { SERIES_URL, SUPPORT_URL } from '../config';
 import { LEVELS, formatRatingRange, type LevelId } from '../data/levels';
 import { routeHref, type Page } from '../hooks';
+import { tabsFor } from '../nav';
 import { ThemeToggle } from './theme';
 
-const PAGES: Page[] = ['repertoire', 'tactics', 'review', 'about'];
 
 // Placeholders until the URLs exist (SPEC §11): both fall back to the About page.
 const seriesHref = SERIES_URL ?? '#/about';
@@ -22,7 +22,7 @@ function Logo() {
 
 function Brand() {
   return (
-    <a href={routeHref('repertoire')} className="brand" aria-label="chesshabits.io, home">
+    <a href={routeHref('play')} className="brand" aria-label="chesshabits.io, home">
       <Logo />
       chesshabits.io
     </a>
@@ -42,9 +42,9 @@ export function DesktopShell({ page, level, onLevel, children }: ShellProps) {
       <header className="header">
         <Brand />
         <nav className="nav" aria-label="Main">
-          {PAGES.map((p) => (
-            <a key={p} href={routeHref(p)} aria-current={p === page ? 'page' : undefined}>
-              {p}
+          {tabsFor(level).map((t) => (
+            <a key={t.page} href={routeHref(t.page)} aria-current={t.page === page ? 'page' : undefined}>
+              {t.label}
             </a>
           ))}
         </nav>
@@ -148,9 +148,9 @@ export function MobileShell({ page, level, onLevel, children }: ShellProps) {
         </div>
       </main>
       <nav className="m-tabbar" aria-label="Main">
-        {PAGES.map((p) => (
-          <a key={p} href={routeHref(p)} aria-current={p === page ? 'page' : undefined}>
-            {p}
+        {tabsFor(level).map((t) => (
+          <a key={t.page} href={routeHref(t.page)} aria-current={t.page === page ? 'page' : undefined}>
+            {t.label}
           </a>
         ))}
       </nav>

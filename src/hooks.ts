@@ -15,29 +15,33 @@ export function useMediaQuery(query: string): boolean {
 
 export const DESKTOP_QUERY = '(min-width: 1024px)';
 
-export type Page = 'repertoire' | 'tactics' | 'review' | 'about';
+export type Page = 'play' | 'openings' | 'tactics' | 'review' | 'about';
 export type OpeningsMode = 'white' | 'black' | 'browse';
 
 export interface Route {
   page: Page;
-  mode: OpeningsMode;
+  /** Trainer sub-view, or null when the URL names none. */
+  mode: OpeningsMode | null;
 }
 
 export function parseHash(hash: string): Route {
   const [page, sub] = hash.replace(/^#\/?/, '').split('/');
+  const mode = sub === 'white' || sub === 'black' || sub === 'browse' ? sub : null;
   switch (page) {
     case 'tactics':
     case 'review':
     case 'about':
-      return { page, mode: 'white' };
+      return { page, mode: null };
+    case 'openings':
+    case 'repertoire': // older name of the trainer tab
+      return { page: 'openings', mode: mode ?? 'white' };
     default:
-      // "#/openings/..." is the old name of "#/repertoire/...", kept so old links work.
-      return { page: 'repertoire', mode: sub === 'black' || sub === 'browse' ? sub : 'white' };
+      return { page: 'play', mode };
   }
 }
 
-export function routeHref(page: Page, mode?: OpeningsMode): string {
-  return page === 'repertoire' ? `#/repertoire/${mode ?? 'white'}` : `#/${page}`;
+export function routeHref(page: Page, mode?: OpeningsMode | null): string {
+  return mode && (page === 'play' || page === 'openings') ? `#/${page}/${mode}` : `#/${page}`;
 }
 
 export function useRoute(): Route {

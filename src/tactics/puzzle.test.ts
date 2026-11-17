@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { checkMove, pickPuzzle, positionAt, solverColor, themeLabel, type Puzzle } from './puzzle';
+import { checkMove, pickPuzzle, positionAt, replayUci, solverColor, startPly, themeLabel, type Puzzle } from './puzzle';
 
-// From the Lichess puzzle database (CC0): after 15.Qxh5, Black mates with ...Qxg2.
+// From the Lichess puzzle database (CC0): after 15.Qxh5, Black mates with ...Qg2.
 const MATE: Puzzle = {
   id: '0000H',
   fen: 'r4rk1/pp3ppp/8/2bqp2b/3N4/P2Bn2P/1PPN1P2/R1BQ1RK1 w - - 1 15',
@@ -27,6 +27,16 @@ describe('puzzle positions', () => {
     const { chess, last } = positionAt(MATE, 1);
     expect(last?.san).toBe('Qxh5');
     expect(chess.turn()).toBe('b');
+  });
+});
+
+describe('replaying puzzle moves', () => {
+  it('numbers moves from the game position and lists SAN', () => {
+    expect(startPly(MATE)).toBe(28); // move 15, White to move
+    expect(startPly(TWO_MATES)).toBe(1); // move 1, Black to move
+    const { sans, chess } = replayUci(MATE.fen, ['d1h5', 'd5g2']);
+    expect(sans).toEqual(['Qxh5', 'Qg2#']);
+    expect(chess.isCheckmate()).toBe(true);
   });
 });
 

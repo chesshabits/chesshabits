@@ -1,15 +1,21 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Chess } from 'chess.js';
 import type { Key } from 'chessground/types';
+import { branch } from '../components/MoveNav';
 import { getStore, startOfDay, type PuzzleRecord } from '../db';
 import type { LevelId } from '../data/levels';
 import { loadPuzzles } from './data';
-import { checkMove, pickPuzzle, solutionMoves, uciToMove, type Puzzle } from './puzzle';
+import { checkMove, pickPuzzle, replayUci, solutionMoves, uciOf, uciToMove, type Puzzle } from './puzzle';
 
 export type TacticsPhase = 'loading' | 'setup' | 'user' | 'opponent' | 'showing' | 'solved' | 'failed';
 
 interface State {
   puzzle: Puzzle | null;
-  ply: number;
+  /**
+   * UCI moves on the board from the puzzle position. While solving, a prefix of the solution;
+   * once the puzzle is over, free play from any viewed position (branching).
+   */
+  played: string[];
   phase: TacticsPhase;
   mistakes: number;
   hint: boolean;
@@ -22,10 +28,11 @@ interface State {
 const SETUP_DELAY = 600;
 const REPLY_DELAY = 400;
 const SHOW_STEP = 700;
+const RECENT = 8;
 
 const fresh = (puzzle: Puzzle | null, sync: number): State => ({
   puzzle,
-  ply: 0,
+  played: [],
   phase: puzzle ? 'setup' : 'loading',
   mistakes: 0,
   hint: false,
@@ -33,6 +40,8 @@ const fresh = (puzzle: Puzzle | null, sync: number): State => ({
   wrong: null,
   sync: sync + 1,
 });
+
+export const isFinished = (phase: TacticsPhase) => phase === 'solved' || phase === 'failed';
 
 export function useTactics(level: LevelId, theme: string | null) {
   const [puzzles, setPuzzles] = useState<Puzzle[] | null>(null);
@@ -65,23 +74,38 @@ export function useTactics(level: LevelId, theme: string | null) {
     [puzzles, theme],
   );
 
-  const next = useCallback(() => {
-    const recs = recordsRef.current;
-    if (!recs) return;
-    const p = pickPuzzle(pool, recs, stateRef.current.puzzle?.id ?? null);
-    setState((s) => fresh(p, s.sync));
-  }, [pool]);
-
-  // First puzzle once loaded, and a new one when the theme filter changes (not on every record update).
-  const loaded = records !== null;
-  useEffect(() => {
-    if (loaded && pool.length) next();
-  }, [loaded, pool, next]);
-
   const commit = (s: State) => {
     stateRef.current = s;
     setState(s);
   };
+
+  const next = useCallback(() => {
+    const recs = recordsRef.current;
+    if (!recs) return;
+    const p = pickPuzzle(pool, recs, stateRef.current.puzzle?.id ?? null);
+    commit(fresh(p, stateRef.current.sync));
+  }, [pool]);
+
+  /** Start the current puzzle again (the first-try result is kept). */
+  const retry = useCallback(() => {
+    const s = stateRef.current;
+    if (s.puzzle) commit(fresh(s.puzzle, s.sync));
+  }, []);
+
+  /** Reopen a puzzle by ID (the "recent" list). */
+  const open = useCallback(
+    (id: string) => {
+      const p = puzzles?.find((x) => x.id === id);
+      if (p) commit(fresh(p, stateRef.current.sync));
+    },
+    [puzzles],
+  );
+
+  // First puzzle once loaded, and a new one when the theme filter changes.
+  const loaded = records !== null;
+  useEffect(() => {
+    if (loaded && pool.length) next();
+  }, [loaded, pool, next]);
 
   const finish = useCallback(
     (s: State, solved: boolean) => {
@@ -113,42 +137,56 @@ export function useTactics(level: LevelId, theme: string | null) {
     const s = state;
     if (!s.puzzle) return;
     const moves = solutionMoves(s.puzzle);
-    let delay = 0;
-    if (s.phase === 'setup') delay = SETUP_DELAY;
-    else if (s.phase === 'opponent') delay = REPLY_DELAY;
-    else if (s.phase === 'showing') delay = SHOW_STEP;
-    else return;
+    const delay = s.phase === 'setup' ? SETUP_DELAY : s.phase === 'opponent' ? REPLY_DELAY : s.phase === 'showing' ? SHOW_STEP : 0;
+    if (!delay) return;
     const id = window.setTimeout(() => {
       const cur = stateRef.current;
-      if (cur.phase !== s.phase || cur.ply !== s.ply || cur.puzzle !== s.puzzle) return;
-      const ply = cur.ply + 1;
-      if (cur.phase === 'showing') {
-        commit({ ...cur, ply, phase: ply >= moves.length ? 'failed' : 'showing' });
-      } else {
-        commit({ ...cur, ply, phase: ply >= moves.length ? 'solved' : 'user', wrong: null });
-      }
+      if (cur.phase !== s.phase || cur.played.length !== s.played.length || cur.puzzle !== s.puzzle) return;
+      const played = moves.slice(0, cur.played.length + 1);
+      const done = played.length >= moves.length;
+      if (cur.phase === 'showing') commit({ ...cur, played, phase: done ? 'failed' : 'showing' });
+      else commit({ ...cur, played, phase: done ? 'solved' : 'user', wrong: null });
     }, delay);
     return () => window.clearTimeout(id);
   }, [state]);
 
+  /**
+   * A move on the board. While solving it is checked against the solution; once the puzzle is
+   * over it is free play from the viewed ply `at` (later moves are dropped).
+   */
   const onMove = useCallback(
-    (from: Key, to: Key) => {
+    (from: Key, to: Key, at: number | null) => {
       const s = stateRef.current;
-      if (s.phase !== 'user' || !s.puzzle) return;
+      if (!s.puzzle) return;
+      if (isFinished(s.phase)) {
+        const ply = at ?? s.played.length;
+        const board = replayUci(s.puzzle.fen, s.played.slice(0, ply)).chess;
+        let uci: string;
+        try {
+          uci = uciOf(new Chess(board.fen()).move({ from, to, promotion: 'q' }));
+        } catch {
+          commit({ ...s, sync: s.sync + 1 });
+          return;
+        }
+        commit({ ...s, played: branch(s.played, ply, uci), wrong: null, sync: s.sync + 1 });
+        return;
+      }
+      if (s.phase !== 'user') return;
       const moves = solutionMoves(s.puzzle);
-      const { ok } = checkMove(s.puzzle, s.ply, from, to);
+      const ply = s.played.length;
+      const { ok } = checkMove(s.puzzle, ply, from, to);
       if (!ok) {
         commit({ ...s, mistakes: s.mistakes + 1, wrong: [from, to], sync: s.sync + 1 });
         return;
       }
-      const ply = s.ply + 1;
-      if (ply >= moves.length) {
-        // A different mating move was accepted: show the stored one so the board matches.
-        const done: State = { ...s, ply, phase: 'solved', wrong: null, sync: s.sync + 1 };
+      const played = moves.slice(0, ply + 1);
+      if (played.length >= moves.length) {
+        // A different mating move may have been accepted: show the stored one so the board matches.
+        const done: State = { ...s, played, phase: 'solved', wrong: null, sync: s.sync + 1 };
         commit(done);
         finish(done, true);
       } else {
-        commit({ ...s, ply, phase: 'opponent', wrong: null });
+        commit({ ...s, played, phase: 'opponent', wrong: null });
       }
     },
     [finish],
@@ -162,15 +200,14 @@ export function useTactics(level: LevelId, theme: string | null) {
   const showSolution = useCallback(() => {
     const s = stateRef.current;
     if (s.phase !== 'user') return;
-    const shownState: State = { ...s, shown: true, phase: 'showing', wrong: null };
-    commit(shownState);
-    finish(shownState, false);
+    const shown: State = { ...s, shown: true, phase: 'showing', wrong: null };
+    commit(shown);
+    finish(shown, false);
   }, [finish]);
 
   const expectedMove = (() => {
     if (!state.puzzle || state.phase !== 'user') return null;
-    const uci = solutionMoves(state.puzzle)[state.ply];
-    const m = uciToMove(uci);
+    const m = uciToMove(solutionMoves(state.puzzle)[state.played.length]);
     return [m.from as Key, m.to as Key] as [Key, Key];
   })();
 
@@ -183,15 +220,31 @@ export function useTactics(level: LevelId, theme: string | null) {
       }
     : null;
 
+  /** Puzzles played most recently (this level), newest first. */
+  const recent = useMemo(() => {
+    if (!records || !puzzles) return [];
+    const byId = new Map(puzzles.map((p) => [p.id, p]));
+    return [...records.values()]
+      .sort((a, b) => b.lastAt - a.lastAt)
+      .slice(0, RECENT)
+      .flatMap((r) => {
+        const p = byId.get(r.id);
+        return p ? [{ puzzle: p, record: r }] : [];
+      });
+  }, [records, puzzles]);
+
   return {
     puzzles,
     pool,
     records,
+    recent,
     state,
     session,
     stats,
     expectedMove,
     next,
+    retry,
+    open,
     onMove,
     showHint,
     showSolution,

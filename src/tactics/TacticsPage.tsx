@@ -2,48 +2,65 @@ import { useMemo, useState } from 'react';
 import type { DrawShape } from 'chessground/draw';
 import type { Key } from 'chessground/types';
 import { Board } from '../components/Board';
-import { DrillNav, HabitsPanel, ProgressRow, Row, Section, Tabs, type DrillCounts } from '../components/Panels';
+import { MoveList, StepButtons, moveLabel, useLineView } from '../components/MoveNav';
+import { HabitsPanel, ProgressRow, Row, Section, Tabs } from '../components/Panels';
 import { levelConfig, showsOpeningNames } from '../data/habits';
 import type { LevelId } from '../data/levels';
 import { tagLabel } from '../data/openings';
 import { useKeys } from '../hooks';
-import { positionAt, solverColor, solutionMoves, themeLabel } from './puzzle';
-import { useTactics } from './useTactics';
+import { tacticsLabel } from '../nav';
+import { replayUci, solverColor, solutionMoves, startPly, themeLabel } from './puzzle';
+import { isFinished, useTactics } from './useTactics';
 
 interface Props {
   level: LevelId;
   desktop: boolean;
-  counts: DrillCounts;
 }
 
-/** Opening-filtered tactics (SPEC §5.2). */
-export function TacticsPage({ level, desktop, counts }: Props) {
+/** Opening-filtered tactics ("free pieces" at Level 1), SPEC §5.2. */
+export function TacticsPage({ level, desktop }: Props) {
   const [theme, setTheme] = useState<string | null>(null);
   const [flipped, setFlipped] = useState(false);
-  const [tab, setTab] = useState<'puzzle' | 'themes' | 'stats'>('puzzle');
+  const [tab, setTab] = useState<'moves' | 'puzzle' | 'themes' | 'stats'>('moves');
   const t = useTactics(level, theme);
   const { state } = t;
   const p = state.puzzle;
   const solver = p ? solverColor(p) : 'white';
   const orientation = flipped ? (solver === 'white' ? 'black' : 'white') : solver;
-  const finished = state.phase === 'solved' || state.phase === 'failed';
+  const finished = isFinished(state.phase);
 
-  const view = useMemo(() => (p ? positionAt(p, state.ply) : null), [p, state.ply]);
+  // Every move on the board, and which of them the board shows (← / → step through them).
+  const full = useMemo(() => (p ? replayUci(p.fen, state.played) : null), [p, state.played]);
+  const lineView = useLineView(state.played.length, `${p?.id}:${state.sync}`);
+  const view = useMemo(
+    () => (p ? replayUci(p.fen, state.played.slice(0, lineView.shown)) : null),
+    [p, state.played, lineView.shown],
+  );
   const lastMove: [Key, Key] | undefined = view?.last ? [view.last.from as Key, view.last.to as Key] : undefined;
+  const live = lineView.view === null;
+  const turn = view ? (view.chess.turn() === 'w' ? 'white' : 'black') : solver;
+  // While solving, only the solver moves (at the live position); once it's over, either side, from any move.
+  const movable = finished ? turn : state.phase === 'user' && live ? solver : null;
 
   const shapes = useMemo<DrawShape[]>(() => {
+    if (!live) return [];
     const out: DrawShape[] = [];
     if (state.wrong) out.push({ orig: state.wrong[0], dest: state.wrong[1], brush: 'bad' });
     if (state.hint && t.expectedMove) out.push({ orig: t.expectedMove[0], brush: 'accent' });
     return out;
-  }, [state.wrong, state.hint, t.expectedMove]);
+  }, [live, state.wrong, state.hint, t.expectedMove]);
 
   useKeys({
     f: () => setFlipped((v) => !v),
     h: () => t.showHint(),
     s: () => t.next(),
+    r: p ? () => t.retry() : undefined,
     n: finished ? () => t.next() : undefined,
     Enter: finished ? () => t.next() : undefined,
+    ArrowLeft: () => lineView.step(-1),
+    ArrowRight: () => lineView.step(1),
+    Home: lineView.first,
+    End: lineView.last,
   });
 
   // Theme counts for the filter.
@@ -59,7 +76,7 @@ export function TacticsPage({ level, desktop, counts }: Props) {
   if (!p) text = t.puzzles && t.pool.length === 0 ? 'No puzzles for this filter.' : 'Loading puzzles…';
   else if (state.phase === 'setup') text = `${cap(solver === 'white' ? 'black' : 'white')} is about to move…`;
   else if (state.phase === 'user' || state.phase === 'opponent')
-    text = state.ply <= 1 ? `Find the best move for ${solver}.` : 'Keep going: find the next move.';
+    text = state.played.length <= 1 ? `Find the best move for ${solver}.` : 'Keep going: find the next move.';
   else if (state.phase === 'showing') {
     label = 'solution';
     text = 'Here is the solution.';
@@ -70,6 +87,7 @@ export function TacticsPage({ level, desktop, counts }: Props) {
     label = 'solution shown';
     text = 'This one will come back later.';
   }
+  if (finished) text += ' Keep playing from any move, or try it again.';
 
   const prompt = (
     <div className="prompt" aria-live="polite">
@@ -120,8 +138,41 @@ export function TacticsPage({ level, desktop, counts }: Props) {
     </Section>
   );
 
+  const moves = p && full && (
+    <Section id="puzzle-moves" title="moves" icon="list" summary={finished ? 'free play' : `${Math.max(0, state.played.length - 1)} played`}>
+      <MoveList
+        line={full.sans}
+        firstPly={startPly(p)}
+        view={lineView.view}
+        onView={lineView.setView}
+        pending={state.phase === 'user'}
+        extraFrom={finished ? solutionMoves(p).length : undefined}
+      />
+      <StepButtons view={lineView} length={state.played.length} />
+    </Section>
+  );
+
+  const recent = t.recent.length > 0 && (
+    <Section id="recent" title="recent" icon="clock" summary={t.recent.length}>
+      {t.recent.map(({ puzzle, record }) => (
+        <button
+          key={puzzle.id}
+          type="button"
+          className="row"
+          aria-pressed={puzzle.id === p?.id}
+          onClick={() => t.open(puzzle.id)}
+        >
+          <span>
+            #{puzzle.id} <span className="dim">· {puzzle.rating}</span>
+          </span>
+          <span className={record.lastResult === 'solved' ? 'accent' : 'bad'}>{record.lastResult === 'solved' ? '✓' : '✕'}</span>
+        </button>
+      ))}
+    </Section>
+  );
+
   const filter = (
-    <Section id="themes" title={`themes · level ${level}`} icon="tag" summary={theme ? themeLabel(theme) : 'all'}>
+    <Section id="themes" title="themes" icon="tag" summary={theme ? themeLabel(theme) : 'all'}>
       <button type="button" className="row" aria-pressed={theme === null} onClick={() => setTheme(null)}>
         <span>all</span>
         <span className="count">{t.puzzles?.length ?? '…'}</span>
@@ -143,7 +194,7 @@ export function TacticsPage({ level, desktop, counts }: Props) {
 
   const total = t.puzzles?.length ?? 0;
   const statsPanel = (
-    <Section id="tactics" title="tactics" icon="bars" summary={`${t.session.solved} ✓`}>
+    <Section id="tactics" title={tacticsLabel(level)} icon="bars" summary={`${t.session.solved} ✓`}>
       <Row label="this session" value={`${t.session.solved} ✓ · ${t.session.failed} ✕`} />
       <Row label="streak" value={t.session.streak} />
       <Row label="today" value={t.stats?.today ?? '…'} />
@@ -155,12 +206,12 @@ export function TacticsPage({ level, desktop, counts }: Props) {
     <Board
       fen={view ? view.chess.fen() : 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'}
       orientation={orientation}
-      movable={state.phase === 'user' ? solver : null}
+      movable={movable}
       lastMove={lastMove}
       shapes={shapes}
-      onMove={t.onMove}
+      onMove={(from, to) => t.onMove(from, to, lineView.view)}
       syncKey={state.sync}
-      label={`Puzzle board, ${solver} to move`}
+      label={finished ? 'Puzzle board, free play' : `Puzzle board, ${solver} to move`}
     />
   );
 
@@ -173,9 +224,8 @@ export function TacticsPage({ level, desktop, counts }: Props) {
   if (desktop) {
     return (
       <>
-        <aside className="side left" aria-label="Tactics progress and drills">
+        <aside className="side left" aria-label="Progress and habits">
           {statsPanel}
-          <DrillNav page="tactics" mode="white" counts={counts} level={level} />
           <HabitsPanel level={level} />
         </aside>
         <main className="center board-area">
@@ -190,12 +240,16 @@ export function TacticsPage({ level, desktop, counts }: Props) {
             <span>
               {glyph(bottom)} {who(bottom)}
             </span>
-            <span>f flip · h hint · s skip</span>
+            <span>{live ? 'f flip · h hint · r retry · ← → step' : lineView.shown && full && p
+                ? `viewing ${moveLabel(startPly(p) + lineView.shown - 1, full.sans[lineView.shown - 1])} · → to return`
+                : 'viewing the start · → to return'}</span>
           </div>
         </main>
         <aside className="side right" aria-label="Puzzle">
           {prompt}
+          {moves}
           {info}
+          {recent}
           {filter}
         </aside>
       </>
@@ -214,13 +268,18 @@ export function TacticsPage({ level, desktop, counts }: Props) {
       <div className="m-board">{board}</div>
       {prompt}
       <Buttons t={t} finished={finished} className="btn-bar" />
-      <Tabs tabs={['puzzle', 'themes', 'stats'] as const} value={tab} onChange={setTab} />
-      {tab === 'puzzle' && info}
+      <Tabs tabs={['moves', 'puzzle', 'themes', 'stats'] as const} value={tab} onChange={setTab} />
+      {tab === 'moves' && moves}
+      {tab === 'puzzle' && (
+        <>
+          {info}
+          {recent}
+        </>
+      )}
       {tab === 'themes' && filter}
       {tab === 'stats' && (
         <>
           {statsPanel}
-          <DrillNav page="tactics" mode="white" counts={counts} level={level} />
           <HabitsPanel level={level} />
         </>
       )}
@@ -233,6 +292,9 @@ function Buttons({ t, finished, className }: { t: ReturnType<typeof useTactics>;
   if (finished) {
     return (
       <div className={className}>
+        <button type="button" onClick={t.retry}>
+          try again
+        </button>
         <button type="button" className="primary" onClick={t.next}>
           next puzzle →
         </button>

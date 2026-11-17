@@ -25,6 +25,24 @@ export function solutionMoves(p: Puzzle): string[] {
   return p.moves.split(' ');
 }
 
+/** Replay UCI moves from a FEN: the position, the last move and the SAN of every move. */
+export function replayUci(fen: string, ucis: readonly string[]): { chess: Chess; last: Move | null; sans: string[] } {
+  const chess = new Chess(fen);
+  let last: Move | null = null;
+  const sans: string[] = [];
+  for (const uci of ucis) {
+    last = chess.move(uciToMove(uci));
+    sans.push(last.san);
+  }
+  return { chess, last, sans };
+}
+
+/** Absolute ply of the first puzzle move (0 = White's first move of the game). */
+export function startPly(p: Pick<Puzzle, 'fen'>): number {
+  const [, turn, , , , full] = p.fen.split(' ');
+  return (Number(full) - 1) * 2 + (turn === 'b' ? 1 : 0);
+}
+
 /** The position after the first `ply` puzzle moves (ply 1 = after the setup move). */
 export function positionAt(p: Puzzle, ply: number): { chess: Chess; last: Move | null } {
   const chess = new Chess(p.fen);

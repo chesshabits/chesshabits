@@ -137,3 +137,30 @@ export function ReviewPage({ desktop, left }: { desktop: boolean; left: ReactNod
   }
   return <div className="center top">{content}</div>;
 }
+
+/** "play" at levels where it will be a game against a bot (coming next). */
+export function PlaySoon({ desktop, left }: { desktop: boolean; left: ReactNode }) {
+  const content = (
+    <article className="prose">
+      <h1>play</h1>
+      <p>Coming next: full games against a bot that plays the series' replies while you're in the repertoire, then
+        an engine set to your level.</p>
+      <p>
+        Until then, drill your <a href="#/openings/white">openings as white</a>, <a href="#/openings/black">as black</a>,
+        or <a href="#/openings/browse">browse the lines</a>.
+      </p>
+    </article>
+  );
+  if (desktop) {
+    return (
+      <>
+        <aside className="side left" aria-label="Habits">
+          {left}
+        </aside>
+        <main className="center top">{content}</main>
+        <aside className="side right" aria-hidden="true" />
+      </>
+    );
+  }
+  return <div className="center top">{content}</div>;
+}
