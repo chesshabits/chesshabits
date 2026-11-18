@@ -13,6 +13,7 @@ Chess Habits is licensed under the [GNU General Public License v3.0](LICENSE). I
 | Dexie.js | browser storage (IndexedDB) | Apache-2.0 | https://github.com/dexie/Dexie.js |
 | JetBrains Mono (via Fontsource) | typeface | OFL-1.1 | https://github.com/JetBrains/JetBrainsMono |
 | Inter (via Fontsource) | typeface | OFL-1.1 | https://github.com/rsms/inter |
-| Stockfish | engine (planned for a later phase; not shipped yet) | GPL-3.0 | https://github.com/official-stockfish/Stockfish |
+| Stockfish | chess engine for the bot (play tab) | GPL-3.0 | https://github.com/official-stockfish/Stockfish |
+| stockfish.js (Nathan Rugg) | WebAssembly build of Stockfish 19, lite single-threaded, served at `/stockfish/` | GPL-3.0 | https://github.com/nmrugg/stockfish.js |
 
 The repertoire data (`data/repertoire-data.json`) is derived from the opening moves of public games on chess.com.

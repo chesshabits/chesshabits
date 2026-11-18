@@ -13,6 +13,7 @@
     ["endgame-king-activity", "attack-pawns"]
   ],
   "extraKnowledge": [],
+  "play": { "botElo": 1300 },
   "trainer": {
     "spacedRepetition": true
   },

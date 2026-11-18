@@ -25,10 +25,28 @@ export interface PuzzleRecord {
   lastResult: 'solved' | 'failed';
 }
 
+/** A finished game against the bot (play tab), for Review later. */
+export interface GameRecord {
+  id?: number;
+  level: number;
+  userColor: 'white' | 'black';
+  botElo: number;
+  /** "5+0", or null when played without a clock. */
+  timeControl: string | null;
+  takebacksAllowed: boolean;
+  takebacks: number;
+  result: '1-0' | '0-1' | '1/2-1/2';
+  reason: string;
+  pgn: string;
+  startedAt: number;
+  endedAt: number;
+}
+
 class ChessHabitsDB extends Dexie {
   cards!: Table<CardRecord, string>;
   reviews!: Table<ReviewRecord, number>;
   puzzles!: Table<PuzzleRecord, string>;
+  games!: Table<GameRecord, number>;
 
   constructor() {
     super('chesshabits');
@@ -37,6 +55,7 @@ class ChessHabitsDB extends Dexie {
       reviews: '++id, deck, at, cardId',
       puzzles: 'id, level, lastAt',
     });
+    this.version(2).stores({ games: '++id, endedAt, level' });
   }
 }
 
@@ -48,12 +67,14 @@ export interface Store {
   reviewsSince(deck: string, since: number): Promise<ReviewRecord[]>;
   puzzles(level: number): Promise<PuzzleRecord[]>;
   putPuzzle(p: PuzzleRecord): Promise<void>;
+  addGame(g: GameRecord): Promise<void>;
 }
 
 function memoryStore(): Store {
   const cards = new Map<string, CardRecord>();
   const reviews: ReviewRecord[] = [];
   const puzzles = new Map<string, PuzzleRecord>();
+  const games: GameRecord[] = [];
   return {
     cards: async (deck) => [...cards.values()].filter((c) => c.deck === deck),
     putCard: async (card) => void cards.set(card.id, card),
@@ -61,6 +82,7 @@ function memoryStore(): Store {
     reviewsSince: async (deck, since) => reviews.filter((r) => r.deck === deck && r.at >= since),
     puzzles: async (level) => [...puzzles.values()].filter((p) => p.level === level),
     putPuzzle: async (p) => void puzzles.set(p.id, p),
+    addGame: async (g) => void games.push(g),
   };
 }
 
@@ -77,6 +99,7 @@ function dexieStore(db: ChessHabitsDB): Store {
         .toArray(),
     puzzles: (level) => db.puzzles.where('level').equals(level).toArray(),
     putPuzzle: async (p) => void (await db.puzzles.put(p)),
+    addGame: async (g) => void (await db.games.add(g)),
   };
 }
 

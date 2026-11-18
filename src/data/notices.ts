@@ -9,5 +9,6 @@ export const NOTICES = [
   { name: 'Dexie.js', what: 'browser storage', license: 'Apache-2.0', url: 'https://github.com/dexie/Dexie.js' },
   { name: 'JetBrains Mono', what: 'typeface', license: 'OFL-1.1', url: 'https://github.com/JetBrains/JetBrainsMono' },
   { name: 'Inter', what: 'typeface', license: 'OFL-1.1', url: 'https://github.com/rsms/inter' },
-  { name: 'Stockfish', what: 'engine (planned, not shipped yet)', license: 'GPL-3.0', url: 'https://github.com/official-stockfish/Stockfish' },
+  { name: 'Stockfish', what: 'chess engine for the bot', license: 'GPL-3.0', url: 'https://github.com/official-stockfish/Stockfish' },
+  { name: 'stockfish.js', what: 'WebAssembly build of Stockfish by Nathan Rugg', license: 'GPL-3.0', url: 'https://github.com/nmrugg/stockfish.js' },
 ] as const;

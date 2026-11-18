@@ -20,7 +20,8 @@
     "chessground": "^9.2.1",
     "dexie": "^4.4.7",
     "react": "^19.3.1",
-    "react-dom": "^19.3.1"
+    "react-dom": "^19.3.1",
+    "stockfish": "^19.0.1"
   },
   "devDependencies": {
     "@types/node": "^24.19.2",

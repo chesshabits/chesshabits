@@ -14,6 +14,10 @@
     ["endgame-king-activity", "attack-pawns"]
   ],
   "extraKnowledge": [],
+  "play": {
+    "$comment": "Default bot strength for games under the play tab (the level's typical rating).",
+    "botElo": 500
+  },
   "trainer": {
     "$comment": "spacedRepetition false = simple practice mode (no due/new schedule); see SPEC §5.1.",
     "spacedRepetition": false

@@ -14,14 +14,14 @@ The top tabs follow your level:
 | 2 | play · tactics · review · about |
 | 3–4 | play · openings · tactics · review · about |
 
-- **Repertoire trainer** (under "play" at Levels 1–2, "openings" at 3–4; white / black / browse lines): the app plays the opponent's replies from the series games (weighted by how often each was played); you play the repertoire move. Wrong moves show the right one with a short reason; a sound move from another level counts as "not our line". Levels 1–2 use a simple practice mode (misses come back later in the session); Levels 3–4 schedule each position with spaced repetition (SM-2). Set per level in `data/levels/level-N.json` (`trainer.spacedRepetition`).
+- **Repertoire trainer** (the "openings" tab at Levels 3–4; white / black / browse lines; at Levels 1–2 the bot game under "play" covers the opening): the app plays the opponent's replies from the series games (weighted by how often each was played); you play the repertoire move. Wrong moves show the right one with a short reason; a sound move from another level counts as "not our line". Levels 1–2 use a simple practice mode (misses come back later in the session); Levels 3–4 schedule each position with spaced repetition (SM-2). Set per level in `data/levels/level-N.json` (`trainer.spacedRepetition`).
 - **Tactics / free pieces** (`#/tactics`): Lichess puzzles from the repertoire's lines, solved from our side, filtered by the level's themes and rating range. Level 1 drills only free pieces: take a free piece, or save your own hanging piece. Puzzles can be retried, stepped through move by move, and played on freely (both sides) once finished; a "recent" list reopens earlier ones.
-- **Play** against a bot (Levels 3–4 show a placeholder): coming next.
+- **Play** (`#/play`): a full game against a bot. While the game follows the series games for your level, the bot answers from them (weighted by how often each reply was played); after that, Stockfish (WebAssembly, in a Web Worker, loaded on first use) at a configurable strength (400–2000; below about 1350 it is weakened by low depth and a random pick among its top lines). Optional clock (3+0, 5+0, 10+0 or custom); takebacks are on without a clock and off with one unless you switch them on. A coach suggests the next habit move, and the level's habits are marked live. Finished games are saved locally for Review.
 - **Level habits**: the habits and restrictions for each level, from `data/levels/level-N.json`.
 
 Opening names appear from Level 3, where openings become one of the habits.
 
-Keyboard: `f` flip, `h` hint, `s` skip, `r` try a puzzle again, `←`/`→` step through moves (`Home`/`End` for first/latest), `n`/`Enter` next.
+Keyboard: `f` flip, `h` hint, `s` skip, `r` try a puzzle again, `u` take back (play), `←`/`→` step through moves (`Home`/`End` for first/latest), `n`/`Enter` next.
 
 ## Development
 

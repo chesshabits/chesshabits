@@ -1104,3 +1104,176 @@ cg-board square.check {
 .m-shell .btn-pair button {
   height: 44px;
 }
+
+/* ---------- play vs bot ---------- */
+
+.select {
+  font: inherit;
+  font-size: 12px;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--line3);
+  border-radius: 0;
+  height: 32px;
+  padding: 0 8px;
+  max-width: 150px;
+}
+
+.switch {
+  flex: none;
+  width: 36px;
+  height: 20px;
+  border: 1px solid var(--line3);
+  position: relative;
+}
+
+.switch span {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 12px;
+  height: 12px;
+  background: var(--dim);
+  transition: transform 150ms ease;
+}
+
+.switch[aria-checked='true'] {
+  border-color: var(--accent);
+}
+
+.switch[aria-checked='true'] span {
+  background: var(--accent);
+  transform: translateX(16px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .switch span {
+    transition: none;
+  }
+}
+
+.custom-clock {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.custom-clock input {
+  width: 52px;
+  height: 32px;
+  font: inherit;
+  font-size: 12px;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--line3);
+  border-radius: 0;
+  padding: 0 6px;
+}
+
+.note {
+  margin: 0;
+  padding: 10px 20px 10px 16px;
+  font-family: var(--prose);
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--dim);
+  border-bottom: 1px solid var(--line2);
+}
+
+.clock {
+  font-variant-numeric: tabular-nums;
+  padding: 0 6px;
+  border: 1px solid var(--line3);
+  color: var(--dim);
+}
+
+.clock.running {
+  color: var(--accent-fg);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.tag.accent {
+  color: var(--accent);
+}
+
+.coach-wrap {
+  width: var(--board);
+}
+
+.coach {
+  border: 1px solid var(--line);
+  padding: 16px 20px;
+}
+
+.coach .label {
+  font-size: 11px;
+  line-height: 16px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.coach p {
+  margin: 8px 0 0;
+  font-family: var(--prose);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.coach .btn-pair {
+  margin-top: 14px;
+}
+
+.coach-off {
+  height: 40px;
+  padding: 0 14px;
+  font-size: 12px;
+  color: var(--dim);
+  border: 1px solid var(--line3);
+}
+
+.toolbar {
+  display: flex;
+  border-bottom: 1px solid var(--line);
+}
+
+.toolbar button {
+  flex: 1;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg);
+}
+
+.toolbar button + button {
+  border-left: 1px solid var(--line);
+}
+
+.m-shell .coach {
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 16px;
+}
+
+.m-shell .coach-off {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  height: 44px;
+}
+
+.m-shell .note {
+  padding-left: 14px;
+  padding-right: 16px;
+}
+
+.m-shell .select,
+.m-shell .custom-clock input {
+  height: 36px;
+}
+
+/* The play screen keeps the coach card in view under the board. */
+.center.board-area.play {
+  --board: min(100%, 600px, max(320px, calc(100vh - 430px)));
+}

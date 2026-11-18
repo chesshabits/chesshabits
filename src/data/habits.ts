@@ -51,6 +51,10 @@ export interface LevelConfig {
   /** Habit IDs, grouped where the series pairs them (e.g. no-hanging-pieces + take-free-pieces). */
   habits: string[][];
   extraKnowledge: string[];
+  play: {
+    /** Default bot strength (Elo) for games under the play tab. */
+    botElo: number;
+  };
   trainer: {
     /** false: simple practice mode with no due/new schedule (SPEC §5.1). */
     spacedRepetition: boolean;

@@ -19,6 +19,7 @@
     "trade-when-up-not-when-down",
     "rook-placement"
   ],
+  "play": { "botElo": 1700 },
   "trainer": {
     "spacedRepetition": true
   },

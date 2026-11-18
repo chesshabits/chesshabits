@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { AboutPage, PlaySoon, ReviewPage } from './components/About';
+import { Suspense, lazy, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { AboutPage, ReviewPage } from './components/About';
 import { HabitsPanel, type DeckCounts } from './components/Panels';
 import { DesktopShell, LevelPicker, MobileShell } from './components/Shell';
 import { ThemeProvider } from './components/theme';
@@ -11,6 +11,9 @@ import { TacticsPage } from './tactics/TacticsPage';
 import { BrowsePage } from './trainer/BrowsePage';
 import { TrainerPage } from './trainer/TrainerPage';
 import { decisionPositions } from './trainer/session';
+
+// The game against the bot (and its engine) loads only when the play tab opens.
+const PlayPage = lazy(() => import('./play/PlayPage'));
 
 function useDeckCounts(level: LevelId | null): DeckCounts {
   return useMemo(
@@ -61,9 +64,12 @@ function Pages({ level, onLevel, desktop }: { level: LevelId | null; onLevel: (l
     content = <ReviewPage desktop={desktop} left={left} />;
   } else if (route.page === 'tactics') {
     content = <TacticsPage key={level} level={level} desktop={desktop} />;
-  } else if (!route.mode) {
-    // "play" at levels where it will be the bot (L3–L4).
-    content = <PlaySoon desktop={desktop} left={left} />;
+  } else if (route.page === 'play') {
+    content = (
+      <Suspense fallback={<div className="center">Loading…</div>}>
+        <PlayPage key={level} level={level} desktop={desktop} />
+      </Suspense>
+    );
   } else if (route.mode === 'browse') {
     content = <BrowsePage key={level} level={level} desktop={desktop} counts={counts} page={route.page} />;
   } else {
@@ -71,7 +77,7 @@ function Pages({ level, onLevel, desktop }: { level: LevelId | null; onLevel: (l
       <TrainerPage
         key={`${level}:${route.mode}`}
         level={level}
-        color={route.mode}
+        color={route.mode === 'black' ? 'black' : 'white'}
         desktop={desktop}
         counts={counts}
         page={route.page}
